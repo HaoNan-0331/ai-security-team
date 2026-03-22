@@ -1,0 +1,159 @@
+[
+  {
+    "timestamp": "2026-02-05T23:54:56.796472",
+    "operation": "get_policies",
+    "endpoint": "/policy",
+    "params": {
+      "api_key": "1c1uqw2e05b44c45rl20j92ncwomhi42",
+      "lang": "cn",
+      "protocol": "1",
+      "vrf": "vrf0",
+      "page": 1,
+      "pageSize": 10
+    },
+    "data": null,
+    "response_summary": "{'data': [{'vrf': 'vrf0', 'id': '8', 'protocol': '1', 'if_in': 'ge0/1', 'if_out': 'ge0/2', 'sip': 's",
+    "success": true,
+    "notes": "自动记录于 2026-02-05 23:54:56"
+  },
+  {
+    "timestamp": "2026-02-06T09:30:56.232493",
+    "operation": "get_backup_version",
+    "endpoint": "/backup-version",
+    "params": {
+      "api_key": "1c1uqw2e05b44c45rl20j92ncwomhi42",
+      "lang": "cn"
+    },
+    "data": null,
+    "response_summary": "{'data': [{'primary': 'ASG_V4.2_SP20250507', 'primary_timestamp': '2026-01-30_06:30:33', 'secondary'",
+    "success": true,
+    "notes": "自动记录于 2026-02-06 09:30:56"
+  },
+  {
+    "timestamp": "2026-02-06T09:30:56.251553",
+    "operation": "get_update_log",
+    "endpoint": "/update-log",
+    "params": {
+      "api_key": "1c1uqw2e05b44c45rl20j92ncwomhi42",
+      "lang": "cn"
+    },
+    "data": null,
+    "response_summary": "{'data': [], 'total': 0}",
+    "success": true,
+    "notes": "自动记录于 2026-02-06 09:30:56"
+  },
+  {
+    "timestamp": "2026-02-06T09:31:40.686789",
+    "operation": "get_policies",
+    "endpoint": "/policy",
+    "params": {
+      "api_key": "1c1uqw2e05b44c45rl20j92ncwomhi42",
+      "lang": "cn",
+      "protocol": "1",
+      "vrf": "vrf0",
+      "page": 1,
+      "pageSize": 1
+    },
+    "data": null,
+    "response_summary": "{'data': [{'vrf': 'vrf0', 'id': '8', 'protocol': '1', 'if_in': 'ge0/1', 'if_out': 'ge0/2', 'sip': 's",
+    "success": true,
+    "notes": "自动记录于 2026-02-06 09:31:40"
+  },
+  {
+    "timestamp": "2026-02-06T09:31:40.721233",
+    "operation": "get_interface_vlan",
+    "endpoint": "/interface-vlan",
+    "params": {
+      "api_key": "1c1uqw2e05b44c45rl20j92ncwomhi42",
+      "lang": "cn"
+    },
+    "data": null,
+    "response_summary": "Error -1000: api is not found",
+    "success": false,
+    "notes": "自动记录于 2026-02-06 09:31:40"
+  },
+  {
+    "timestamp": "2026-02-06T09:31:40.891469",
+    "operation": "get_routes",
+    "endpoint": "/route-static",
+    "params": {
+      "api_key": "1c1uqw2e05b44c45rl20j92ncwomhi42",
+      "lang": "cn"
+    },
+    "data": null,
+    "response_summary": "{'data': [{'vrf': '', 'dst_ip': '0.0.0.0/0', 'nh_type': '0', 'nh_ip': '192.168.10.254', 'distance': ",
+    "success": true,
+    "notes": "自动记录于 2026-02-06 09:31:40"
+  },
+  {
+    "timestamp": "2026-02-06T09:31:41.002126",
+    "operation": "get_ecd_item",
+    "endpoint": "/ecd-item",
+    "params": {
+      "api_key": "1c1uqw2e05b44c45rl20j92ncwomhi42",
+      "lang": "cn"
+    },
+    "data": null,
+    "response_summary": "{'data': [{'ip_switch': '0', 'domain_switch': '0', 'url_switch': '0', 'filehash_switch': '0'}], 'tot",
+    "success": true,
+    "notes": "自动记录于 2026-02-06 09:31:41"
+  },
+  {
+    "timestamp": "2026-02-06T09:31:41.116237",
+    "operation": "get_blacklist",
+    "endpoint": "/blacklist",
+    "params": {
+      "api_key": "1c1uqw2e05b44c45rl20j92ncwomhi42",
+      "lang": "cn",
+      "ip_type": "1"
+    },
+    "data": null,
+    "response_summary": "{'data': [{'ip': '2.2.2.2', 'age': '86400', 'effectTime': '2026-02-04 19:57:36', 'leftTime': '0', 'r",
+    "success": true,
+    "notes": "自动记录于 2026-02-06 09:31:41"
+  },
+  {
+    "timestamp": "2026-02-06T09:31:41.152262",
+    "operation": "get_addresses",
+    "endpoint": "/address",
+    "params": {
+      "api_key": "1c1uqw2e05b44c45rl20j92ncwomhi42",
+      "lang": "cn"
+    },
+    "data": null,
+    "response_summary": "{'data': [{'name': 'any', 'desc': '', 'ref': '2', 'type': '0', 'def': '1', 'fresh_time': '3600', 'de",
+    "success": true,
+    "notes": "自动记录于 2026-02-06 09:31:41"
+  },
+  {
+    "timestamp": "2026-03-19T23:13:21.879302",
+    "operation": "add_blacklist",
+    "endpoint": "/blacklist-domain",
+    "params": {
+      "api_key": "d4h023fmk8ea5vfmpd3ftu3v7czjdvv1",
+      "lang": "cn"
+    },
+    "data": {
+      "domain": "fget-career.com",
+      "enable": "1",
+      "age": "-1",
+      "fuzzy_match": "0"
+    },
+    "response_summary": "Success",
+    "success": true,
+    "notes": "自动记录于 2026-03-19 23:13:21"
+  },
+  {
+    "timestamp": "2026-03-19T23:13:31.862215",
+    "operation": "get_blacklist",
+    "endpoint": "/blacklist-domain",
+    "params": {
+      "api_key": "d4h023fmk8ea5vfmpd3ftu3v7czjdvv1",
+      "lang": "cn"
+    },
+    "data": null,
+    "response_summary": "{'data': [{'domain': 'fget-career.com', 'age': '-1', 'effectTime': '2026-03-19 23:01:18', 'leftTime'",
+    "success": true,
+    "notes": "自动记录于 2026-03-19 23:13:31"
+  }
+]

@@ -1,0 +1,15 @@
+{
+  "success": true,
+  "executed": 1,
+  "total": 1,
+  "failed_at": null,
+  "results": [
+    {
+      "command": "display version",
+      "success": true,
+      "output": "display version\r\r\nH3C Comware Software, Version 7.1.070, Alpha 7170\r\r\nCopyright (c) 2004-2022 New H3C Technologies Co., Ltd. All rights reserved.\r\r\nH3C S6850 uptime is 0 weeks, 0 days, 0 hours, 4 minutes\r\r\nLast reboot reason: User reboot\r\r\nBoot image: flash:/s6850-cmw710-boot-t7064p15.bin\r\r\nBoot image version: 7.1.070, Alpha 7170\r\r\n  Compiled Nov 21 2022 11:00:00\r\r\nBoot image: flash:/s6850-cmw710-system-t7064p15.bin\r\r\nBoot image version: 7.1.070, Alpha 7170\r\r\n  Compiled Nov 21 2022 11:00:00\r\r\n\r\r",
+      "error": null,
+      "help": null
+    }
+  ]
+}

@@ -1,0 +1,173 @@
+# Syslog Parser Configuration
+# 定义日志解析器的配置文件
+
+parsers:
+  # ========== RFC5424 Parser ==========
+  # 新版 Syslog 协议解析器 (RFC5424)
+  - name: rfc5424
+    type: syslog
+    version: rfc5424
+    charset: utf-8
+    priority: 100
+    description: "RFC5424 标准格式解析器"
+    # RFC5424 格式示例:
+    # <34>1 2003-10-11T22:14:15.003Z host1.mydomain.com su - ID47 [exampleSDID@32473 iut="3" eventSource="Application"] BOM'su root failed for lonvital on /dev/pts/8"
+
+  # ========== RFC3164 Parser ==========
+  # 传统 BSD Syslog 协议解析器 (RFC3164)
+  - name: rfc3164
+    type: syslog
+    version: rfc3164
+    charset: utf-8
+    priority: 90
+    description: "RFC3164 (BSD Syslog) 标准格式解析器"
+    # RFC3164 格式示例:
+    # <34>Oct 11 22:14:15 host1.mydomain.com su[1234]: BOM'su root failed for lonvital on /dev/pts/8"
+
+  # ========== CEF Parser ==========
+  # Common Event Format 解析器
+  - name: cef
+    type: cef
+    charset: utf-8
+    priority: 80
+    description: "CEF (Common Event Format) 格式解析器"
+    # CEF 格式示例:
+    # CEF:0|Vendor|Product|Version|EventID|Name|Severity|Extension
+    # CEF:0|Security|IDS|1.0|100|Attack Detected|10|src=10.0.0.1 dst=192.168.1.1
+    parse_options:
+      header_delimiter: "|"
+      extension_delimiter: "="
+      max_fields: 100
+
+  # ========== JSON Parser ==========
+  # JSON 格式解析器
+  - name: json
+    type: json
+    charset: utf-8
+    priority: 70
+    description: "JSON 格式解析器"
+    # JSON 格式示例:
+    # {"timestamp": "2023-10-11T22:14:15Z", "host": "server1", "message": "Test log"}
+
+  # ========== Vendor-Specific Parsers ==========
+
+  # Huawei Firewall Parser
+  - name: huawei_firewall
+    type: vendor_specific
+    vendor: huawei
+    device_type: firewall
+    base_format: rfc5424
+    priority: 60
+    description: "华为防火墙专用解析器"
+    patterns:
+      - regex: '(\S+) (\d+) (\S+) %%(\S+)'
+        fields: [timestamp, seq, module, event_id]
+      - regex: '%%(\S+)ARM/(\d+)/(\S+)'
+        fields: [vendor, severity, mnemonic]
+
+  # Huawei Switch Parser
+  - name: huawei_switch
+    type: vendor_specific
+    vendor: huawei
+    device_type: switch
+    base_format: rfc5424
+    priority: 60
+    description: "华为交换机专用解析器"
+
+  # Cisco IOS Parser
+  - name: cisco_ios
+    type: vendor_specific
+    vendor: cisco
+    device_type: router
+    base_format: rfc3164
+    priority: 60
+    description: "思科 IOS 设备解析器"
+    patterns:
+      - regex: '%(\S+)-(\d+)-(\S+): (.*)'
+        fields: [facility, severity, mnemonic, message]
+      - regex: 'SYSLOG-(\w+)-(\w+)'
+        fields: [severity, event_type]
+
+  # Cisco ASA Parser
+  - name: cisco_asa
+    type: vendor_specific
+    vendor: cisco
+    device_type: firewall
+    base_format: rfc5424
+    priority: 60
+    description: "思科 ASA 防火墙解析器"
+    patterns:
+      - regex: '%(\w+)-(\d+)-(\d+)'
+        fields: [severity, error_code, message_id]
+
+  # H3C Switch Parser
+  - name: h3c_switch
+    type: vendor_specific
+    vendor: h3c
+    device_type: switch
+    base_format: rfc5424
+    priority: 60
+    description: "H3C 交换机解析器"
+
+  # Ruijie Switch Parser
+  - name: ruijie_switch
+    type: vendor_specific
+    vendor: ruijie
+    device_type: switch
+    base_format: rfc5424
+    priority: 60
+    description: "锐捷交换机解析器"
+
+  # Sangfor NGAF Parser
+  - name: sangfor_ngaf
+    type: vendor_specific
+    vendor: sangfor
+    device_type: firewall
+    base_format: cef
+    priority: 55
+    description: "深信服 NGAF 防火墙解析器"
+
+  # Topsec Firewall Parser
+  - name: topsec_firewall
+    type: vendor_specific
+    vendor: topsec
+    device_type: firewall
+    base_format: cef
+    priority: 55
+    description: "天融信防火墙解析器"
+
+  # NSFOCUS IPS Parser
+  - name: nsfocus_ips
+    type: vendor_specific
+    vendor: nsfocus
+    device_type: ids
+    base_format: cef
+    priority: 55
+    description: "绿盟 IPS 解析器"
+
+  # Venustech IPS Parser
+  - name: venustech_ips
+    type: vendor_specific
+    vendor: venustech
+    device_type: ids
+    base_format: cef
+    priority: 55
+    description: "启明星辰 IPS 解析器"
+
+  # QAX Tianeye Probe Parser
+  - name: qax_tianeye
+    type: vendor_specific
+    vendor: qax
+    device_type: probe
+    base_format: json
+    priority: 50
+    description: "奇安信天眼威胁探针解析器"
+
+  # Colasoft Probe Parser
+  - name: colasoft_probe
+    type: vendor_specific
+    vendor: colasoft
+    device_type: probe
+    base_format: json
+    priority: 50
+    description: "科来分析器解析器"

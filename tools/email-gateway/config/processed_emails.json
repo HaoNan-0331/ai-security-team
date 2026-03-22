@@ -1,0 +1,20 @@
+[
+  {
+    "email_id": "9",
+    "subject": "网络资产查询",
+    "sender": "1466160825@qq.com",
+    "sender_name": "1466160825@qq.com",
+    "to": [
+      "wanghaonan0331@foxmail.com"
+    ],
+    "date": "2026-02-16T00:49:17+08:00",
+    "body_text": "\r\n帮我看看，交换机192.168.56.254，上有那些接口启用了\r\n\r\n\r\n1466160825@qq.com\r\n",
+    "body_html": "<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=GB2312\"><style>body { line-height: 1.5; }body { font-size: 14px; font-family: \"Microsoft YaHei UI\"; color: rgb(0, 0, 0); line-height: 1.5; }</style></head><body>\n<div><span></span><br></div>\n<div>帮我看看，交换机192.168.56.254，上有那些接口启用了</div><hr style=\"WIDTH: 210px; HEIGHT: 1px\" color=\"#b5c4df\" size=\"1\" align=\"left\">\n<div><span><div style=\"MARGIN: 10px; FONT-FAMILY: verdana; FONT-SIZE: 10pt\"><div>1466160825@qq.com</div></div></span></div>\n</body></html>",
+    "attachments": [],
+    "sender_role": "admin",
+    "sender_description": "主管",
+    "processed_at": "2026-02-16T12:09:14.086952",
+    "status": "completed",
+    "response_sent": true
+  }
+]

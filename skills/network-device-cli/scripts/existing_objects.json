@@ -1,0 +1,15 @@
+{
+  "success": true,
+  "executed": 1,
+  "total": 1,
+  "failed_at": null,
+  "results": [
+    {
+      "command": "display object-group ip address",
+      "success": true,
+      "output": "display object-group ip address\r\r\nIp address object group cqһ: 1 object(out of use)\r\r\n 0 network host name pmos.cq.sgcc.com.cn\r\r\n\r\r\nIp address object group 77.220.214.0: 1 object(out of use)\r\r\n 0 network subnet 77.220.214.0 255.255.255.0\r\r\n\r\r\nIp address object group ӿ: 1 object(out of use)\r\r\n 0 network host address 192.168.1.24\r\r\n\r\r\nIp address object group ͨǷ: 1 object(out of use)\r\r\n 0 network range 172.18.0.31 172.18.0.32\r\r\n\r\r\n<NF>",
+      "error": null,
+      "help": null
+    }
+  ]
+}

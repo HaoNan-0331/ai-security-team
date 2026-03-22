@@ -1,0 +1,107 @@
+# IP信誉评分规则配置
+
+scoring:
+  # 风险等级阈值
+  thresholds:
+    low: 20        # 0-20: 低风险
+    medium: 40     # 21-40: 较低风险
+    high: 60       # 41-60: 中等风险
+    critical: 80   # 61-80: 高风险
+                    # 81-100: 严重风险
+
+  # 风险等级名称和描述
+  levels:
+    very_low:
+      range: [0, 20]
+      name: "低风险"
+      description: "可信IP地址，未发现恶意活动记录"
+      color: "green"
+      action: "无需特殊处理"
+
+    low:
+      range: [21, 40]
+      name: "较低风险"
+      description: "基本可信，有少量非关键性报告"
+      color: "blue"
+      action: "建议监控"
+
+    medium:
+      range: [41, 60]
+      name: "中等风险"
+      description: "存在可疑活动记录，需要关注"
+      color: "yellow"
+      action: "需要进一步调查"
+
+    high:
+      range: [61, 80]
+      name: "高风险"
+      description: "多个情报源报告恶意活动"
+      color: "orange"
+      action: "建议阻止并深入调查"
+
+    critical:
+      range: [81, 100]
+      name: "严重风险"
+      description: "确认为恶意IP地址"
+      color: "red"
+      action: "立即阻止，进行事件响应"
+
+  # 威胁类型权重（影响最终评分）
+  threat_weights:
+    malware: 1.0        # 恶意软件
+    phishing: 0.9       # 网络钓鱼
+    botnet: 1.0         # 僵尸网络
+    c2_server: 1.0      # 命令与控制服务器
+    trojan: 0.95        # 木马
+    ransomware: 1.0     # 勒索软件
+    backdoor: 0.95      # 后门
+    exploit_kit: 1.0    # 漏洞利用工具包
+    spam: 0.4           # 垃圾邮件
+    scan: 0.3           # 端口扫描
+    dos_attack: 0.8     # DDoS攻击
+    brute_force: 0.6    # 暴力破解
+    sql_injection: 0.9  # SQL注入
+    web_attack: 0.7     # Web攻击
+    proxy: 0.5          # 代理服务
+    tor_exit: 0.4       # Tor出口节点
+
+  # 评分计算规则
+  calculation:
+    # 检测率评分（VirusTotal等）
+    detection_rate:
+      formula: "(positive_detections / total_detections) * 100"
+      max_score: 100
+
+    # 报告数量评分（AbuseIPDB等）
+    report_count:
+      scale_type: "logarithmic"  # 对数缩放，避免少量报告导致过高分数
+      base_score: 0
+      max_score: 100
+      formula: "min(100, log2(report_count + 1) * 15)"
+
+    # 综合评分公式
+    overall:
+      formula: "sum(source_score * source_weight * source_reliability)"
+      normalization: "normalize_to_100"  # 归一化到0-100
+
+  # 数据质量调整
+  quality_factors:
+    freshness:
+      # 数据新鲜度权重
+      last_day: 1.0
+      last_week: 0.9
+      last_month: 0.7
+      last_quarter: 0.5
+      older: 0.3
+
+    confidence:
+      # 置信度调整
+      high: 1.0
+      medium: 0.8
+      low: 0.6
+
+# 批量查询配置
+batch:
+  max_concurrent: 5    # 最大并发查询数
+  delay_between: 1     # 查询间隔（秒）
+  timeout: 30          # 单个查询超时（秒）

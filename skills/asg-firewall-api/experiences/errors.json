@@ -1,0 +1,216 @@
+{
+  "version": "1.0.0",
+  "last_updated": "2026-02-04",
+  "description": "上元信安ASG防火墙API错误码手册",
+  "errors": {
+    "0": {
+      "code": "0",
+      "name": "成功",
+      "description": "操作成功完成",
+      "severity": "info",
+      "solutions": [
+        "无需处理，操作已完成"
+      ]
+    },
+    "87": {
+      "code": "87",
+      "name": "目标策略/对象不存在",
+      "description": "指定的策略、地址对象或其他配置对象不存在",
+      "severity": "error",
+      "possible_causes": [
+        "策略ID或对象名称输入错误",
+        "对象已被删除",
+        "在错误的VRF实例中查找"
+      ],
+      "solutions": [
+        "使用GET方法先查询确认对象是否存在",
+        "检查名称拼写是否正确",
+        "确认VRF实例名称（默认为vrf0）",
+        "检查对象是否已被其他操作删除"
+      ],
+      "example": {
+        "error": "修改策略时返回错误码87",
+        "check": "先用 GET /api/policy 查询策略列表确认ID"
+      }
+    },
+    "88": {
+      "code": "88",
+      "name": "参考对象不存在",
+      "description": "策略中引用的地址对象、服务对象等不存在",
+      "severity": "error",
+      "possible_causes": [
+        "地址对象未创建",
+        "地址对象名称拼写错误",
+        "使用了错误的地址对象格式（如 addr_xxx 而非 src_xxx/dst_xxx）",
+        "refer_id 指向的策略不存在"
+      ],
+      "solutions": [
+        "先使用 GET /api/address 查询所有地址对象",
+        "地址对象命名规范：源地址用 src_xxx，目的地址用 dst_xxx",
+        "确保 refer_id 设置为 0（不参考其他策略）或指向存在的策略ID",
+        "添加策略前先创建所需的地址对象"
+      ],
+      "example": {
+        "error": "添加策略时返回 '参考对象不存在'",
+        "check": "确认 sip 和 dip 引用的地址对象名称在地址列表中存在",
+        "code_example": "查询地址对象：client.get_addresses()"
+      }
+    },
+    "90": {
+      "code": "90",
+      "name": "出接口或入接口不存在",
+      "description": "策略中指定的网络接口不存在",
+      "severity": "error",
+      "possible_causes": [
+        "接口名称拼写错误",
+        "接口未配置",
+        "接口已删除"
+      ],
+      "solutions": [
+        "使用 GET /api/interface-vlan 等接口查询可用接口",
+        "确认接口名称格式（如 ge0/0, ge0/1）",
+        "如果不确定，使用 'any' 表示任意接口"
+      ]
+    },
+    "106": {
+      "code": "106",
+      "name": "名称冲突",
+      "description": "创建的对象名称已存在",
+      "severity": "error",
+      "possible_causes": [
+        "地址对象名称已存在",
+        "策略ID已被使用",
+        "模板名称重复"
+      ],
+      "solutions": [
+        "使用 GET 方法先查询确认名称是否可用",
+        "使用不同的名称",
+        "如果更新现有对象，使用 PUT 方法而非 POST"
+      ],
+      "example": {
+        "error": "添加地址对象 src_10.12.12.1 时返回名称冲突",
+        "reason": "该地址对象已存在",
+        "action": "直接使用现有对象，或使用 PUT 方法更新"
+      }
+    },
+    "107": {
+      "code": "107",
+      "name": "对象名称不存在",
+      "description": "指定的对象名称不存在",
+      "severity": "error",
+      "possible_causes": [
+        "对象名称拼写错误",
+        "对象已被删除",
+        "在错误的上下文中查找"
+      ],
+      "solutions": [
+        "使用 GET 方法查询对象列表",
+        "确认对象名称正确",
+        "检查对象是否在正确的模块中"
+      ]
+    },
+    "116": {
+      "code": "116",
+      "name": "非法的MAC地址",
+      "description": "MAC地址格式不正确",
+      "severity": "error",
+      "possible_causes": [
+        "MAC地址格式错误",
+        "MAC地址为空",
+        "使用了分隔符格式不正确"
+      ],
+      "solutions": [
+        "MAC地址格式应为：xx:xx:xx:xx:xx:xx",
+        "检查MAC地址是否为空",
+        "确保使用冒号分隔"
+      ]
+    },
+    "250": {
+      "code": "250",
+      "name": "参数错误",
+      "description": "请求参数不正确或缺失必填参数",
+      "severity": "error",
+      "possible_causes": [
+        "缺少必填参数",
+        "参数类型错误",
+        "参数值超出允许范围",
+        "策略ID超出范围（1-10000）"
+      ],
+      "solutions": [
+        "检查API文档确认所有必填参数",
+        "确认参数类型正确（数字、字符串等）",
+        "检查参数值范围",
+        "策略添加时需提供完整的必填参数列表"
+      ]
+    },
+    "926": {
+      "code": "926",
+      "name": "Web访问控制模板不存在",
+      "description": "策略中引用的Web控制模板不存在",
+      "severity": "error",
+      "possible_causes": [
+        "模板名称拼写错误",
+        "模板未创建"
+      ],
+      "solutions": [
+        "确认模板名称正确",
+        "如不使用Web控制，将 webac 参数设为空字符串",
+        "先创建所需的模板"
+      ]
+    },
+    "-22": {
+      "code": "-22",
+      "name": "非法的IP地址",
+      "description": "IP地址格式不正确",
+      "severity": "error",
+      "possible_causes": [
+        "IP地址格式错误",
+        "IP地址为空",
+        "使用了超出范围的IP"
+      ],
+      "solutions": [
+        "确认IPv4地址格式：xxx.xxx.xxx.xxx",
+        "确认IPv6地址格式正确",
+        "检查IP地址各部分在0-255范围内（IPv4）"
+      ]
+    }
+  },
+  "http_errors": {
+    "400": {
+      "code": 400,
+      "name": "Bad Request",
+      "description": "请求参数错误",
+      "solutions": ["检查请求参数格式", "确认Content-Type为application/json"]
+    },
+    "401": {
+      "code": 401,
+      "name": "Unauthorized",
+      "description": "认证失败",
+      "solutions": ["检查Token是否正确", "确认Token未过期", "重新生成Token"]
+    },
+    "404": {
+      "code": 404,
+      "name": "Not Found",
+      "description": "API端点不存在",
+      "solutions": ["检查API路径", "确认API版本"]
+    },
+    "500": {
+      "code": 500,
+      "name": "Internal Server Error",
+      "description": "服务器内部错误",
+      "solutions": ["联系防火墙技术支持", "检查防火墙系统日志"]
+    },
+    "502": {
+      "code": 502,
+      "name": "Bad Gateway",
+      "description": "网关错误",
+      "solutions": ["检查防火墙服务状态", "确认网络连接稳定"]
+    },
+    "503": {
+      "code": 503,
+      "name": "Service Unavailable",
+      "description": "服务不可用",
+      "solutions": ["等待片刻后重试", "检查防火墙负载情况"]
+    }
+  }
+}

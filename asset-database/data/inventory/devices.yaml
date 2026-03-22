@@ -1,0 +1,160 @@
+# =====================================================
+# 示例资产清单 (YAML格式)
+# =====================================================
+
+# 网络设备
+- name: Core-Firewall-01
+  type: Security
+  manufacturer: Huawei
+  model: USG6000E
+  serial_number: FW2023001
+  ip_address: 192.168.1.1
+  mac_address: 00:1A:1A:1A:1A:1A
+  hostname: fw-core-01
+  fqdn: fw-core-01.example.com
+  subnet: 192.168.1.0/24
+  vlan: 1
+  gateway: 192.168.1.254
+  site: DataCenter-A
+  building: Building-A
+  floor: 1F
+  room: ServerRoom
+  rack: Rack-A01
+  rack_unit: U01-U04
+  importance: critical
+  environment: production
+  business_unit: security
+  owner: security-team@example.com
+  cost_center: CC-001
+  status: active
+  os_type: VRP
+  os_version: V500R005C20SPC500
+  services:
+    - firewall
+    - vpn
+    - ids
+  open_ports:
+    - 22/tcp
+    - 443/tcp
+    - 5001/udp
+  config:
+    ssh_port: 22
+    snmp_community: public
+    access_method: ssh
+
+- name: Core-Switch-01
+  type: Network
+  manufacturer: Huawei
+  model: S7700
+  serial_number: SW2023001
+  ip_address: 192.168.1.2
+  mac_address: 00:1A:1A:1A:1A:1B
+  hostname: sw-core-01
+  subnet: 192.168.1.0/24
+  importance: critical
+  environment: production
+  business_unit: network
+  owner: network-team@example.com
+  site: DataCenter-A
+  status: active
+  services:
+    - lldp
+    - snmp
+  config:
+    snmp_community: public
+
+- name: Access-Switch-01
+  type: Network
+  manufacturer: Ruijie
+  model: RG-S5750-28GT4S
+  ip_address: 192.168.10.1
+  importance: medium
+  environment: production
+  business_unit: office
+  owner: network-team@example.com
+  site: Office-Building
+  status: active
+
+# 服务器
+- name: Web-Server-01
+  type: Server
+  manufacturer: Dell
+  model: PowerEdge R740
+  serial_number: SV2023001
+  ip_address: 192.168.1.100
+  mac_address: 00:1B:1B:1B:1B:1B
+  hostname: web-01
+  fqdn: web-01.example.com
+  subnet: 192.168.1.0/24
+  importance: high
+  environment: production
+  business_unit: web-app
+  owner: web-team@example.com
+  site: DataCenter-A
+  rack: Rack-B01
+  status: active
+  os_type: Linux
+  os_version: Ubuntu 22.04 LTS
+  services:
+    - http
+    - https
+    - ssh
+  open_ports:
+    - 22/tcp
+    - 80/tcp
+    - 443/tcp
+    - 8000/tcp
+  config:
+    ssh_port: 22
+    ssh_credential: ssh://web-admin
+
+- name: DB-Primary
+  type: Database
+  manufacturer: Oracle
+  model: Exadata X8M
+  serial_number: DB2023001
+  ip_address: 192.168.2.10
+  importance: critical
+  environment: production
+  business_unit: database
+  owner: dba-team@example.com
+  site: DataCenter-B
+  status: active
+  services:
+    - mysql
+    - oracle
+  open_ports:
+    - 3306/tcp
+    - 1521/tcp
+
+# 终端设备
+- name: Office-PC-001
+  type: Endpoint
+  manufacturer: HP
+  model: ProDesk 600
+  ip_address: 192.168.20.50
+  mac_address: 00:50:56:AA:BB:CC
+  hostname: OFFICE-PC-001
+  importance: low
+  environment: production
+  business_unit: sales
+  owner: user001@example.com
+  site: Office-Floor2
+  status: active
+
+- name: Mgmt-Server
+  type: Server
+  manufacturer: VMware
+  model: vCenter
+  ip_address: 192.168.100.10
+  importance: high
+  environment: production
+  business_unit: it
+  owner: vmware-team@example.com
+  status: active
+  services:
+    - vmware
+    - https
+  open_ports:
+    - 443/tcp
+    - 5480/tcp

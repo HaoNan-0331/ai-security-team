@@ -1,0 +1,53 @@
+[
+  {
+    "method": "POST",
+    "endpoint": "/api/policy",
+    "params": {
+      "lang": "cn"
+    },
+    "data": {
+      "id": "1",
+      "protocol": "1",
+      "if_in": "any",
+      "if_out": "any",
+      "sip": "any",
+      "dip": "any",
+      "sev": "any",
+      "user": "any",
+      "app": "any",
+      "tr": "always",
+      "mode": "1",
+      "enable": "1",
+      "syslog": "1",
+      "log_level": "6"
+    }
+  },
+  {
+    "method": "GET",
+    "endpoint": "/api/policy",
+    "params": {
+      "lang": "cn"
+    }
+  },
+  {
+    "method": "POST",
+    "endpoint": "/api/blacklist",
+    "params": {
+      "lang": "cn"
+    },
+    "data": {
+      "ip_type": "1",
+      "ip": "1.1.1.1",
+      "age": "300",
+      "enable": "1"
+    }
+  },
+  {
+    "method": "GET",
+    "endpoint": "/api/blacklist",
+    "params": {
+      "lang": "cn",
+      "ip_type": "1"
+    }
+  }
+]

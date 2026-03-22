@@ -1,0 +1,3 @@
+# Email Gateway Dependencies
+# 无需额外依赖，使用Python标准库
+

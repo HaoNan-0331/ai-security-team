@@ -1,0 +1,15 @@
+{
+  "success": true,
+  "executed": 1,
+  "total": 1,
+  "failed_at": null,
+  "results": [
+    {
+      "command": "display current-configuration",
+      "success": true,
+      "output": "display current-configuration\r\r\n#\r\r\n version 7.1.070, Alpha 7170\r\r\n#\r\r\n sysname H3C\r\r\n#\r\r\n irf mac-address persistent timer\r\r\n irf auto-update enable\r\r\n undo irf link-delay\r\r\n irf member 1 priority 1\r\r\n#\r\r\n dhcp enable\r\r\n#\r\r\n lldp global enable\r\r\n#\r\r\n system-working-mode standard\r\r\n xbar load-single\r\r\n password-recovery enable\r\r\n lpu-type f-series\r\r\n#\r\r\nvlan 1\r\r\n#\r\r\nvlan 100\r\r\n name LINK_VLAN100\r\r\n---- More ----\r\r               \r#\r\r\nvlan 160\r\r\n#\r\r\n stp global enable\r\r\n#\r\r\ndhcp server ip-pool vla",
+      "error": null,
+      "help": null
+    }
+  ]
+}

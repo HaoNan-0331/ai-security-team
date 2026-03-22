@@ -1,0 +1,92 @@
+# Asset Configuration for Syslog Server
+# This file defines asset information for enrichment
+
+# Individual assets
+assets:
+  - ip_address: "192.168.1.1"
+    hostname: "firewall-01"
+    asset_name: "Main Firewall"
+    asset_type: "firewall"
+    business_system: "Network Security"
+    department: "IT Operations"
+    owner: "network-team@company.com"
+    contact: "John Doe (555-0101)"
+    location: "Data Center 1"
+    site: "Headquarters"
+    environment: "production"
+    criticality: "high"
+    tags:
+      - perimeter
+      - critical_infrastructure
+
+  - ip_address: "192.168.1.10"
+    hostname: "web-server-01"
+    asset_name: "Web Server 01"
+    asset_type: "server"
+    business_system: "Web Services"
+    department: "Engineering"
+    owner: "web-team@company.com"
+    location: "Data Center 1"
+    site: "Headquarters"
+    environment: "production"
+    criticality: "high"
+    tags:
+      - web
+      - frontend
+
+  - ip_address: "192.168.2.100"
+    hostname: "db-primary"
+    asset_name: "Primary Database"
+    asset_type: "server"
+    business_system: "Data Storage"
+    department: "Engineering"
+    owner: "db-team@company.com"
+    location: "Data Center 1"
+    site: "Headquarters"
+    environment: "production"
+    criticality: "critical"
+    tags:
+      - database
+      - critical_data
+
+# IP range assignments
+ip_ranges:
+  - range: "10.0.0.0/8"
+    asset_type: "internal_network"
+    business_system: "Corporate Network"
+    environment: "production"
+    tags:
+      - internal
+      - corporate
+
+  - range: "172.16.0.0/12"
+    asset_type: "internal_network"
+    business_system: "Corporate Network"
+    environment: "production"
+    tags:
+      - internal
+      - corporate
+
+  - range: "192.168.0.0/16"
+    asset_type: "internal_network"
+    business_system: "Corporate Network"
+    environment: "production"
+    tags:
+      - internal
+      - corporate
+
+  - range: "192.168.100.0/24"
+    asset_type: "dmz_network"
+    business_system: "DMZ"
+    environment: "production"
+    tags:
+      - dmz
+      - perimeter
+
+  - range: "192.168.200.0/24"
+    asset_type: "guest_network"
+    business_system: "Guest Network"
+    environment: "production"
+    tags:
+      - guest
+      - untrusted

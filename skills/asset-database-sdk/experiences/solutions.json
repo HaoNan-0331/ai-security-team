@@ -1,0 +1,116 @@
+{
+  "批量导入最佳实践": {
+    "description": "安全高效地进行批量资产导入",
+    "steps": [
+      "准备JSON格式数据，包含必填字段name和asset_type",
+      "使用dry_run=True进行试运行，预览结果",
+      "检查返回的invalid_items，修复数据问题",
+      "确认无误后使用dry_run=False执行导入",
+      "导入完成后验证数据完整性"
+    ],
+    "example_file": "examples/batch_import_example.json",
+    "code_example": "import sys\nsys.path.insert(0, 'teams/ai-security-team/asset-database')\nfrom asset_sdk import AssetClient\n\nclient = AssetClient()\n\n# 准备数据\nassets = [\n    {\"name\": \"Web-01\", \"asset_type\": \"Server\", \"ip_address\": \"192.168.1.10\"},\n    {\"name\": \"Web-02\", \"asset_type\": \"Server\", \"ip_address\": \"192.168.1.11\"},\n]\n\n# 试运行\nresult = client.batch_create(assets, dry_run=True)\nprint(f\"预计创建: {result['total']}, 失败: {result['failed_count']}\")\n\n# 执行导入\nif result['failed_count'] == 0:\n    result = client.batch_create(assets, dry_run=False, changed_by=\"admin\")\n    print(f\"创建成功: {result['success_count']}\")"
+  },
+  "风险报告自动化": {
+    "description": "定期生成风险报告，用于安全评估",
+    "steps": [
+      "按min_score过滤高风险资产（建议50分以上）",
+      "使用include_details=True获取详细信息",
+      "导出报告为JSON或CSV格式",
+      "集成到定期巡检流程（如每日/每周）",
+      "设置告警阈值，超过阈值自动通知"
+    ],
+    "code_example": "import sys\nsys.path.insert(0, 'teams/ai-security-team/asset-database')\nfrom asset_sdk import AssetClient\nimport json\nfrom datetime import datetime\n\nclient = AssetClient()\n\n# 生成风险报告\nreport = client.get_risk_report(\n    environment=\"production\",\n    min_score=50,\n    include_details=True\n)\n\n# 保存报告\ntimestamp = datetime.now().strftime(\"%Y%m%d_%H%M%S\")\nfilename = f\"risk_report_{timestamp}.json\"\nwith open(filename, 'w', encoding='utf-8') as f:\n    json.dump(report, f, ensure_ascii=False, indent=2)\n\n# 告警处理\nif report['high_risk_count'] > 0:\n    print(f\"警告: 发现 {report['high_risk_count']} 个高风险资产!\")"
+  },
+  "资产隔离应急响应": {
+    "description": "发现安全事件时快速隔离受影响资产",
+    "steps": [
+      "识别受影响资产（通过IP、名称或关键字搜索）",
+      "更新资产状态为isolated，设置合适的隔离级别",
+      "提高风险评分（建议80分以上）",
+      "记录变更人和变更原因",
+      "生成隔离资产报告供后续分析"
+    ],
+    "code_example": "import sys\nsys.path.insert(0, 'teams/ai-security-team/asset-database')\nfrom asset_sdk import AssetClient\n\nclient = AssetClient()\n\n# 查找受影响资产\naffected = client.find_assets(\"web\", asset_type=\"Server\")\n\n# 批量隔离\nfor asset in affected:\n    client.update_asset(\n        asset['asset_id'],\n        status='isolated',\n        isolation_status='network',\n        risk_score=85,\n        changed_by='threat-response',\n        change_reason='检测到恶意软件事件'\n    )\n\n# 生成报告\nisolated = client.list_assets_by_isolation_status('network')\nprint(f\"已隔离 {len(isolated)} 个资产\")"
+  },
+  "SSH连接凭据获取": {
+    "description": "安全获取服务器SSH连接凭据",
+    "steps": [
+      "使用get_asset获取资产详情",
+      "使用get_password解密获取密码",
+      "从资产中提取ssh_port（默认22）",
+      "使用凭据建立SSH连接",
+      "连接完成后不在日志中记录密码"
+    ],
+    "code_example": "import sys\nsys.path.insert(0, 'teams/ai-security-team/asset-database')\nfrom asset_sdk import AssetClient\nimport paramiko\n\nclient = AssetClient()\n\n# 获取资产信息\nasset = client.get_asset(asset_id)\npassword = client.get_password(asset_id)\nssh_port = asset.get('ssh_port', 22)\nip_address = asset['ip_address']\n\n# SSH连接\nssh = paramiko.SSHClient()\nssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())\nssh.connect(ip_address, port=ssh_port, username=asset['username'], password=password)\n\n# 执行命令\nstdin, stdout, stderr = ssh.exec_command('uptime')\nprint(stdout.read().decode())\n\nssh.close()\n\n# 注意: 不要在日志中打印password!"
+  },
+  "资产变更追溯": {
+    "description": "追踪资产的所有变更历史",
+    "steps": [
+      "使用get_change_history获取变更历史",
+      "使用get_audit_logs获取详细审计日志",
+      "按时间、变更人、变更类型筛选",
+      "分析变更趋势和频繁变更项",
+      "导出变更记录用于审计"
+    ],
+    "code_example": "import sys\nsys.path.insert(0, 'teams/ai-security-team/asset-database')\nfrom asset_sdk import AssetClient\n\nclient = AssetClient()\n\n# 获取变更历史\nhistory = client.get_change_history(asset_id, limit=20)\n\nprint(f\"\\n资产变更历史 ({asset['name']}):\")\nprint(\"-\" * 80)\nfor log in history:\n    print(f\"{log['created_at']} | {log['changed_by']:15} | {log['change_type']:10} | {log['change_reason'][:30]}\")\n\n# 获取审计日志（按变更类型筛选）\nlogs = client.get_audit_logs(\n    asset_id=asset_id,\n    change_type=\"update\",\n    limit=50\n)"
+  },
+  "数据库备份策略": {
+    "description": "定期备份资产数据库确保数据安全",
+    "steps": [
+      "使用asset_backup.py脚本或手动复制数据库文件",
+      "按日期命名备份文件（如assets_backup_20260226.db）",
+      "设置保留策略（如保留最近30天备份）",
+      "测试备份文件可恢复性",
+      "将重要备份存储到安全位置"
+    ],
+    "script": "python scripts/asset_backup.py --output /backup/assets/ --keep 30",
+    "code_example": "import shutil\nfrom datetime import datetime\n\n# 备份数据库\nsource = 'teams/ai-security-team/asset-database/data/assets.db'\ntimestamp = datetime.now().strftime(\"%Y%m%d\")\ndestination = f'/backup/assets_backup_{timestamp}.db'\n\nshutil.copy2(source, destination)\nprint(f\"备份完成: {destination}\")"
+  },
+  "资产统计分析": {
+    "description": "多维度统计分析资产数据",
+    "steps": [
+      "使用get_statistics获取多维度统计",
+      "分析按类型、状态、环境、重要性的分布",
+      "识别异常分布（如过多退役资产）",
+      "生成可视化报告",
+      "为资产管理决策提供依据"
+    ],
+    "code_example": "import sys\nsys.path.insert(0, 'teams/ai-security-team/asset-database')\nfrom asset_sdk import AssetClient\n\nclient = AssetClient()\n\n# 获取统计信息\nstats = client.get_statistics(\n    by_type=True,\n    by_status=True,\n    by_environment=True,\n    by_importance=True\n)\n\n# 打印统计结果\nprint(\"\\n按类型统计:\")\nfor asset_type, count in stats['by_type'].items():\n    print(f\"  {asset_type}: {count}\")\n\nprint(\"\\n按状态统计:\")\nfor status, count in stats['by_status'].items():\n    print(f\"  {status}: {count}\")\n\nprint(\"\\n按重要性统计:\")\nfor importance, count in stats['by_importance'].items():\n    print(f\"  {importance}: {count}\")"
+  },
+  "网络拓扑关系管理": {
+    "description": "建立和维护资产之间的网络关系",
+    "steps": [
+      "识别网络设备之间的物理连接关系",
+      "使用add_relationship建立依赖关系",
+      "关系类型包括: depends_on, connected_to, protects, hosts",
+      "定期验证关系准确性",
+      "可视化网络拓扑图"
+    ],
+    "code_example": "import sys\nsys.path.insert(0, 'teams/ai-security-team/asset-database')\nfrom asset_sdk import AssetClient\n\nclient = AssetClient()\n\n# 建立关系: 服务器 -> 数据库\nclient.add_relationship(\n    source_id=server_id,\n    target_id=db_id,\n    relation_type=\"depends_on\",\n    description=\"Web服务器依赖数据库\",\n    created_by=\"network-ops\"\n)\n\n# 建立关系: 防火墙 -> DMZ服务器\nclient.add_relationship(\n    source_id=firewall_id,\n    target_id=dmz_server_id,\n    relation_type=\"protects\",\n    description=\"防火墙保护DMZ服务器\",\n    created_by=\"network-ops\"\n)\n\n# 查询关系\nrelationships = client.get_relationships(server_id, direction=\"outbound\")\nfor rel in relationships:\n    print(f\"{rel['source_name']} --{rel['relation_type']}--> {rel['target_name']}\")"
+  },
+  "健康检查自动化": {
+    "description": "定期检查资产连通性和端口状态",
+    "steps": [
+      "使用health_check检查连通性（ICMP）或端口（TCP）",
+      "批量检查多个资产提高效率",
+      "记录检查结果到数据库或日志",
+      "对失败资产设置告警",
+      "定期执行（如每小时）"
+    ],
+    "script": "python scripts/health_check.py --type Server --check-type connectivity",
+    "code_example": "import sys\nsys.path.insert(0, 'teams/ai-security-team/asset-database')\nfrom asset_sdk import AssetClient\n\nclient = AssetClient()\n\n# 获取服务器列表\nservers = client.list_assets(asset_type=\"Server\", environment=\"production\")\nserver_ids = [s['asset_id'] for s in servers]\n\n# 批量健康检查\nresults = client.health_check(\n    asset_ids=server_ids,\n    check_type=\"connectivity\"\n)\n\n# 分析结果\nunreachable = [r for r in results if r['status'] == 'unreachable']\nif unreachable:\n    print(f\"警告: {len(unreachable)} 个服务器不可达!\")\n    for r in unreachable:\n        print(f\"  - {r['asset_name']} ({r['ip_address']})\")"
+  },
+  "密码轮换管理": {
+    "description": "定期轮换资产密码提高安全性",
+    "steps": [
+      "识别需要轮换密码的资产（按时间或类型）",
+      "生成新密码或从密码管理系统获取",
+      "使用update_password更新密码",
+      "同步更新资产管理系统中的密码",
+      "记录轮换操作到审计日志",
+      "通知相关管理员"
+    ],
+    "code_example": "import sys\nsys.path.insert(0, 'teams/ai-security-team/asset-database')\nfrom asset_sdk import AssetClient\nimport secrets\nimport string\n\ndef generate_password(length=16):\n    \"\"\"生成安全密码\"\"\"\n    alphabet = string.ascii_letters + string.digits + string.punctuation\n    return ''.join(secrets.choice(alphabet) for _ in range(length))\n\nclient = AssetClient()\n\n# 获取需要轮换的服务器\nservers = client.list_assets(asset_type=\"Server\", environment=\"production\")\n\nfor server in servers:\n    # 生成新密码\n    new_password = generate_password()\n    \n    # 更新密码\n    client.update_password(\n        server['asset_id'],\n        new_password,\n        changed_by=\"asset-mgmt\",\n        change_reason=\"定期密码轮换\"\n    )\n    \n    print(f\"已更新 {server['name']} 的密码\")\n\n# 注意: 还需要同步更新实际系统的密码!"
+  }
+}

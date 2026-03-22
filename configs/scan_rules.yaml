@@ -1,0 +1,17 @@
+# 补丁扫描规则
+rules:
+  - name: critical_security_patches
+    condition: "critical"
+    action: "immediate"
+    windows:
+      - "security"
+      - "important"
+    linux:
+      - "security"
+  - name: monthly_update
+    condition: "monthly"
+    action: "scheduled"
+    windows:
+      - "recommended"
+    linux:
+      - "updates"

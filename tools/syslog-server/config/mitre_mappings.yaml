@@ -1,0 +1,164 @@
+# MITRE ATT&CK Mapping Configuration
+# Custom mapping rules for MITRE ATT&CK framework
+
+# Custom techniques
+techniques:
+  - id: "T1566.001"
+    name: "Spearphishing Attachment"
+    tactic: ["initial_access"]
+    description: "Spearphishing attachment is a specific variant of spearphishing."
+    tags: ["phishing", "email", "attachment"]
+
+  - id: "T1566.002"
+    name: "Spearphishing Link"
+    tactic: ["initial_access"]
+    description: "Spearphishing with a malicious link."
+    tags: ["phishing", "email", "link"]
+
+  - id: "T1195.001"
+    name: "Compromise Software Supply Chain"
+    tactic: ["initial_access", "persistence"]
+    description: " adversaries may inject malicious code into software supply chains."
+    tags: ["supply_chain", "trojan"]
+
+  - id: "T1210"
+    name: "Exploitation of Remote Services"
+    tactic: ["lateral_movement", "initial_access"]
+    description: "Adversaries may take advantage of weaknesses in services on systems."
+    tags: ["exploit", "remote"]
+
+  - id: "T1562.001"
+    name: "Disable or Modify Tools"
+    tactic: ["defense_evasion"]
+    description: "Adversaries may modify and/or disable security tools."
+    tags: ["evasion", "security_tools"]
+
+  - id: "T1027"
+    name: "Obfuscated Files or Information"
+    tactic: ["defense_evasion"]
+    description: "Adversaries may attempt to make an executable or file difficult to discover or analyze."
+    tags: ["obfuscation", "evasion"]
+
+# Custom mappings
+mappings:
+  - id: "MAP_SPEARPHISH"
+    name: "Spearphishing Attachment"
+    technique_id: "T1566.001"
+    technique_name: "Spearphishing Attachment"
+    tactics: ["initial_access"]
+    patterns:
+      message:
+        - "phishing"
+        - "malicious attachment"
+        - "spearphishing"
+      event_type: ["email", "phishing"]
+    confidence: 0.8
+    severity: 7
+    tags: ["email", "phishing"]
+
+  - id: "MAP_SUPPLY_CHAIN"
+    name: "Supply Chain Attack"
+    technique_id: "T1195.001"
+    technique_name: "Compromise Software Supply Chain"
+    tactics: ["initial_access", "persistence"]
+    patterns:
+      message:
+        - "supply chain"
+        - "trojanized update"
+        - "malicious package"
+      event_type: ["software", "update", "package"]
+    confidence: 0.85
+    severity: 9
+    tags: ["supply_chain", "trojan"]
+
+  - id: "MAP_DISABLE_TOOLS"
+    name: "Disable Security Tools"
+    technique_id: "T1562.001"
+    technique_name: "Disable or Modify Tools"
+    tactics: ["defense_evasion"]
+    patterns:
+      message:
+        - "disable antivirus"
+        - "stop security service"
+        - "disable firewall"
+        - "kill edr"
+      event_type: ["security", "antivirus", "firewall"]
+    confidence: 0.9
+    severity: 8
+    tags: ["evasion", "defense"]
+
+  - id: "MAP_OBFUSCATION"
+    name: "Obfuscated Content"
+    technique_id: "T1027"
+    technique_name: "Obfuscated Files or Information"
+    tactics: ["defense_evasion"]
+    patterns:
+      message:
+        - "base64"
+        - "encoded content"
+        - "obfuscated"
+        - "packed"
+    confidence: 0.7
+    severity: 5
+    tags: ["obfuscation", "evasion"]
+
+  - id: "MAP_EXPLOIT_REMOTE"
+    name: "Remote Service Exploitation"
+    technique_id: "T1210"
+    technique_name: "Exploitation of Remote Services"
+    tactics: ["lateral_movement", "initial_access"]
+    patterns:
+      message:
+        - "remote exploit"
+        - "smb exploit"
+        - "rce remote"
+      event_type: ["exploit", "remote"]
+    confidence: 0.85
+    severity: 9
+    tags: ["exploit", "lateral", "remote"]
+
+  - id: "MAP_PROCESS_INJECTION"
+    name: "Process Injection"
+    technique_id: "T1055"
+    technique_name: "Process Injection"
+    tactics: ["defense_evasion", "privilege_escalation"]
+    patterns:
+      message:
+        - "process injection"
+        - "dll injection"
+        - "process hollowing"
+        - "atom bombing"
+    confidence: 0.8
+    severity: 8
+    tags: ["injection", "evasion"]
+
+  - id: "MAP_FILE_ENCRYPTION"
+    name: "File Encryption for Impact"
+    technique_id: "T1486"
+    technique_name: "Data Encrypted for Impact"
+    tactics: ["impact"]
+    patterns:
+      message:
+        - "file encrypted"
+        - "ransomware detected"
+        - "encrypted files"
+        - "decrypt note"
+    confidence: 0.95
+    severity: 10
+    tags: ["ransomware", "impact"]
+
+  - id: "MAP_SYSTEM_RECON"
+    name: "System Network Configuration Discovery"
+    technique_id: "T1016"
+    technique_name: "System Network Configuration Discovery"
+    tactics: ["discovery"]
+    patterns:
+      message:
+        - "network config"
+        - "ipconfig"
+        - "ifconfig"
+        - "route table"
+      event_type: ["recon", "discovery"]
+    confidence: 0.7
+    severity: 4
+    tags: ["discovery", "recon"]

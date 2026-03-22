@@ -1,0 +1,159 @@
+# 违规检测规则配置
+version: "1.0"
+last_updated: "2026-02-19"
+
+# 违规类型定义
+violation_types:
+  unauthorized_execution:
+    id: "V001"
+    name: "越权执行"
+    description: "执行了超出能力范围的任务"
+    severity: "high"
+    score_deduction: 40
+    detection:
+      method: "capability_boundary_check"
+      description: "对比Agent定义的能力边界与实际执行动作"
+    criteria:
+      - "执行的动作类型不在Agent的能力列表中"
+      - "操作的目标资源类型超出Agent的管理范围"
+      - "使用的工具/技能不在Agent的授权范围内"
+    examples:
+      - "network-ops配置了防火墙规则（应属于policy-exec）"
+      - "threat-response直接修改了资产数据库（应通过asset-mgmt）"
+      - "log-analysis尝试执行漏洞扫描（应属于vuln-assessment）"
+    handling:
+      immediate_action: "记录违规并扣分"
+      alert_threshold: 1  # 1次即告警
+
+  collaboration_rule_violation:
+    id: "V002"
+    name: "违反协作规则"
+    description: "未优先寻求Agent协作，直接上报人类或擅自处理"
+    severity: "medium"
+    score_deduction: 30
+    detection:
+      method: "collaboration_flow_check"
+      description: "检查任务处理流程是否符合规则二（协作优先）"
+    subtypes:
+      direct_escalation:
+        name: "直接上报"
+        description: "未先寻求Agent协作直接上报人类"
+        detection: "任务超出能力范围时，未查询/请求其他Agent协助，直接上报"
+        score_deduction: 30
+
+      unauthorized_handling:
+        name: "擅自处理"
+        description: "超出能力范围但擅自处理，未寻求协作"
+        detection: "执行了超出能力范围的任务，且未请求其他Agent协助"
+        score_deduction: 40  # 同时算越权
+
+    correct_flow:
+      - "识别任务超出能力范围"
+      - "查询团队内是否有专业Agent可处理"
+      - "向该Agent发送协作请求"
+      - "配合执行，提供支持信息"
+      - "接收执行结果"
+      - "如团队内无法解决，上报人类"
+
+    handling:
+      immediate_action: "记录违规并扣分"
+      alert_threshold: 3  # 24小时内3次同一种违规告警
+
+  execution_error:
+    id: "V003"
+    name: "错误执行"
+    description: "执行操作产生错误或失败"
+    severity: "variable"  # 根据影响程度
+    score_deduction_formula: "基于错误严重程度"
+    detection:
+      method: "execution_result_check"
+      description: "监控执行结果状态"
+    severity_levels:
+      critical:
+        name: "严重错误"
+        criteria: "导致系统故障、数据丢失、安全漏洞"
+        score_deduction: 50
+        immediate_action: "记录+立即告警"
+
+      high:
+        name: "高影响错误"
+        criteria: "导致任务失败，需要重做，影响其他任务"
+        score_deduction: 30
+        immediate_action: "记录+告警"
+
+      medium:
+        name: "中等影响错误"
+        criteria: "部分失败，需要修正但可继续"
+        score_deduction: 15
+        immediate_action: "记录"
+
+      low:
+        name: "轻微错误"
+        criteria: "警告信息，不影响结果"
+        score_deduction: 5
+        immediate_action: "记录"
+
+# 连续违规检测规则
+consecutive_violation_rules:
+  same_type_24h:
+    name: "同类型违规24小时内多次"
+    description: "同一种违规类型在24小时内发生多次"
+    threshold: 3
+    time_window: "24h"
+    alert_level: "critical"
+    action: "立即告警"
+
+  low_score_streak:
+    name: "低分连续"
+    description: "综合评分连续多次低于60分"
+    threshold: 3
+    condition: "overall_score < 60"
+    alert_level: "warning"
+    action: "告警并分析原因"
+
+  serious_violation:
+    name: "严重违规"
+    description: "发生严重级别的违规（如严重越权）"
+    threshold: 1
+    condition: "severity == 'critical' or violation_type == 'unauthorized_execution' with high impact"
+    alert_level: "critical"
+    action: "立即告警，上报人类"
+
+# 豁免规则（特殊情况）
+exemption_rules:
+  emergency_override:
+    name: "紧急情况覆盖"
+    description: "在紧急安全事件等极端情况下，某些违规可被豁免"
+    conditions:
+      - "获得人类管理员预先授权"
+      - "紧急安全事件需要立即响应"
+      - "事后24小时内提交书面说明"
+    approval_required: "human_admin"
+
+# 违规记录格式
+violation_record_format:
+  fields:
+    - violation_id: "违规唯一标识"
+    - timestamp: "违规发生时间"
+    - agent_id: "违规Agent ID"
+    - violation_type: "违规类型代码"
+    - violation_name: "违规类型名称"
+    - severity: "严重程度"
+    - description: "详细描述"
+    - evidence: "证据信息"
+    - score_deduction: "扣分值"
+    - consecutive_count: "连续违规次数（同类型）"
+    - alert_triggered: "是否触发告警"
+    - status: "处理状态"
+
+# 配置文件版本管理
+version_management:
+  current_version: "1.0"
+  last_updated: "2026-02-19"
+  update_approval_required: true
+  approver: "human_admin"
+  change_log:
+    - version: "1.0"
+      date: "2026-02-19"
+      changes: "初始版本，定义三种违规类型和检测规则"
+      approved_by: "human_admin"

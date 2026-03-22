@@ -1,0 +1,290 @@
+{
+  "version": "1.0.0",
+  "last_updated": "2026-02-04",
+  "description": "上元信安ASG防火墙API常见问题解决方案库",
+  "solutions": [
+    {
+      "id": "sol_001",
+      "title": "添加策略时返回错误码88（参考对象不存在）",
+      "category": "策略配置",
+      "symptoms": [
+        "添加策略时返回 {\"code\": \"88\", \"str\": \"参考对象不存在\"}",
+        "使用已知存在的地址对象仍然失败"
+      ],
+      "root_cause": "策略添加时缺少完整的必填参数，特别是 refer_id 和 mv_opt 参数",
+      "steps": [
+        {
+          "step": 1,
+          "action": "确认地址对象存在",
+          "command": "client.get_addresses()",
+          "check": "在返回列表中找到 sip 和 dip 对应的地址对象名称"
+        },
+        {
+          "step": 2,
+          "action": "使用完整的策略参数模板",
+          "code": {
+            "language": "python",
+            "snippet": "policy_data = {\n  \"id\": \"3\",\n  \"protocol\": \"1\",\n  \"if_in\": \"any\",\n  \"if_out\": \"any\",\n  \"sip\": \"src_10.12.12.1\",\n  \"dip\": \"dst_223.5.5.5\",\n  \"sev\": \"any\",\n  \"user\": \"any\",\n  \"app\": \"any\",\n  \"tr\": \"always\",\n  \"mode\": \"2\",\n  \"enable\": \"1\",\n  \"bingo\": \"0\",\n  \"syslog\": \"1\",\n  \"log_level\": \"4\",\n  \"refer_id\": \"0\",     # 关键：设置为0\n  \"mv_opt\": \"0\",        # 关键：设置为0\n  \"desc\": \"禁止访问\",\n  \"mirror_dev\": \"null\",\n  \"flowstat\": \"0\",\n  \"protection_enable\": \"0\",\n  \"protection_module\": \"\",\n  \"conn_slimit\": \"0\",\n  \"conn_rate_slimit\": \"0\",\n  \"conn_dlimit\": \"0\",\n  \"conn_rate_dlimit\": \"0\",\n  \"https_audit\": \"0\",\n  \"appac\": \"\",\n  \"ips\": \"\",\n  \"av\": \"\",\n  \"webac\": \"\"\n}"
+          }
+        },
+        {
+          "step": 3,
+          "action": "验证响应",
+          "code": {
+            "language": "python",
+            "snippet": "result = client.add_policy(policy_data)\nif result.get('success') or result.get('code') == '0':\n    print('策略添加成功')\nelse:\n    print(f'失败: {result}')"
+          }
+        }
+      ],
+      "prevention": "使用完整的策略参数模板，不要省略可选参数"
+    },
+    {
+      "id": "sol_002",
+      "title": "地址对象创建后查询不到",
+      "category": "地址对象",
+      "symptoms": [
+        "创建地址对象返回成功",
+        "但查询列表中找不到该对象",
+        "使用该对象添加策略时报错88"
+      ],
+      "root_cause": "地址对象名称格式不规范，使用下划线替代了点号",
+      "steps": [
+        {
+          "step": 1,
+          "action": "检查地址对象名称格式",
+          "check": "源地址应为 src_xxx，目的地址应为 dst_xxx，保留原始IP格式的点号"
+        },
+        {
+          "step": 2,
+          "action": "删除错误格式的对象",
+          "code": {
+            "language": "python",
+            "snippet": "# 删除错误格式的对象\nclient.delete_address({\n  \"name\": \"addr_10_12_12_1\",\n  \"type\": 0,\n  \"def\": 0\n})"
+          }
+        },
+        {
+          "step": 3,
+          "action": "创建正确格式的对象",
+          "code": {
+            "language": "python",
+            "snippet": "client.add_address({\n  \"name\": \"src_10.12.12.1\",  # 保留点号\n  \"desc\": \"源地址10.12.12.1\",\n  \"type\": 0,\n  \"item\": [{\"type\": 0, \"host\": \"10.12.12.1\"}]\n})"
+          }
+        }
+      ],
+      "prevention": "遵循命名规范：src_<IP> 或 dst_<IP>，保留IP原始格式"
+    },
+    {
+      "id": "sol_003",
+      "title": "SSL证书验证失败",
+      "category": "连接问题",
+      "symptoms": [
+        "连接时返回 SSL 错误",
+        "requests.exceptions.SSLError"
+      ],
+      "root_cause": "防火墙使用自签名证书，默认SSL验证失败",
+      "steps": [
+        {
+          "step": 1,
+          "action": "禁用SSL验证",
+          "code": {
+            "language": "python",
+            "snippet": "client = ASGApiClient(\n  host=\"https://192.168.10.249\",\n  token=\"your_token\",\n  verify_ssl=False  # 禁用SSL验证\n)"
+          }
+        },
+        {
+          "step": 2,
+          "action": "或者使用HTTP协议",
+          "code": {
+            "language": "python",
+            "snippet": "client = ASGApiClient(\n  host=\"http://192.168.10.249\",  # 使用HTTP\n  token=\"your_token\"\n)"
+          }
+        }
+      ],
+      "prevention": "创建客户端时始终设置 verify_ssl=False"
+    },
+    {
+      "id": "sol_004",
+      "title": "空响应导致JSON解析失败",
+      "category": "API响应处理",
+      "symptoms": [
+        "API调用返回空响应",
+        "response.json() 报 JSONDecodeError"
+      ],
+      "root_cause": "某些API（如添加地址对象）成功时返回空响应",
+      "steps": [
+        {
+          "step": 1,
+          "action": "检查响应是否为空",
+          "code": {
+            "language": "python",
+            "snippet": "if not response.text.strip():\n    response_data = {'success': True}\nelse:\n    response_data = response.json()"
+          }
+        }
+      ],
+      "prevention": "使用已修复的 asg_api_client.py，它已处理空响应情况"
+    },
+    {
+      "id": "sol_005",
+      "title": "查询近七天日志返回0条记录",
+      "category": "日志查询",
+      "symptoms": [
+        "查询防火墙日志返回 total: 0",
+        "日志时间轴统计显示0条"
+      ],
+      "root_cause": "可能原因：1) 日志记录功能未启用 2) 没有符合条件的流量 3) 日志已被清理",
+      "steps": [
+        {
+          "step": 1,
+          "action": "检查策略是否启用了日志记录",
+          "command": "client.get_policies()",
+          "check": "查看策略的 syslog 字段是否为 '1'"
+        },
+        {
+          "step": 2,
+          "action": "确认有流量经过防火墙",
+          "check": "检查网络连接和路由配置"
+        },
+        {
+          "step": 3,
+          "action": "检查日志存储配置",
+          "command": "client.request('GET', '/syslog-server')"
+        }
+      ],
+      "prevention": "创建策略时设置 syslog='1' 启用日志记录"
+    },
+    {
+      "id": "sol_006",
+      "title": "连接超时或无法连接",
+      "category": "连接问题",
+      "symptoms": [
+        "requests.exceptions.Timeout",
+        "requests.exceptions.ConnectionError",
+        "error: 连接失败"
+      ],
+      "root_cause": "网络问题或防火墙地址错误",
+      "steps": [
+        {
+          "step": 1,
+          "action": "测试网络连通性",
+          "command": "ping 192.168.10.249"
+        },
+        {
+          "step": 2,
+          "action": "检查防火墙地址是否正确",
+          "check": "确认IP地址、协议(http/https)、端口"
+        },
+        {
+          "step": 3,
+          "action": "检查防火墙服务状态",
+          "command": "通过Web界面登录防火墙确认服务正常"
+        },
+        {
+          "step": 4,
+          "action": "增加超时时间",
+          "code": {
+            "language": "python",
+            "snippet": "# 修改 asg_api_client.py 中的 timeout 参数\nresponse = self.session.get(url, params=..., timeout=60)"
+          }
+        }
+      ],
+      "prevention": "使用前先 ping 防火墙IP确认网络可达"
+    },
+    {
+      "id": "sol_007",
+      "title": "策略ID超出范围",
+      "category": "策略配置",
+      "symptoms": [
+        "添加策略时返回错误",
+        "错误提示与ID范围有关"
+      ],
+      "root_cause": "策略ID必须在1-10000范围内",
+      "steps": [
+        {
+          "step": 1,
+          "action": "查询现有最大策略ID",
+          "code": {
+            "language": "python",
+            "snippet": "result = client.get_policies(page=1, pageSize=100)\nexisting_ids = [int(p['id']) for p in result['data']]\nmax_id = max(existing_ids) if existing_ids else 0"
+          }
+        },
+        {
+          "step": 2,
+          "action": "选择下一个可用ID",
+          "code": {
+            "language": "python",
+            "snippet": "new_id = max_id + 1\nif new_id > 10000:\n    print('策略ID超出范围，需要清理旧策略')"
+          }
+        }
+      ],
+      "prevention": "添加策略前先查询现有ID，避免冲突"
+    },
+    {
+      "id": "sol_008",
+      "title": "参数类型错误",
+      "category": "参数格式",
+      "symptoms": [
+        "返回错误码250（参数错误）",
+        "参数值被拒绝"
+      ],
+      "root_cause": "API要求所有参数为字符串类型",
+      "steps": [
+        {
+          "step": 1,
+          "action": "将所有参数转换为字符串",
+          "code": {
+            "language": "python",
+            "snippet": "policy_data = {\n  \"id\": str(3),           # 转为字符串\n  \"enable\": str(1),       # 转为字符串\n  \"mode\": str(2),          # 转为字符串\n  # ...\n}"
+          }
+        }
+      ],
+      "prevention": "在发送请求前将所有参数值转为字符串"
+    },
+    {
+      "id": "sol_009",
+      "title": "Token无效或过期",
+      "category": "认证",
+      "symptoms": [
+        "返回401 Unauthorized",
+        "操作被拒绝"
+      ],
+      "root_cause": "Token过期或从错误来源获取",
+      "steps": [
+        {
+          "step": 1,
+          "action": "重新生成Token",
+          "instruction": "登录防火墙Web界面 -> 系统管理 -> 管理员 -> API管理 -> 生成Token"
+        },
+        {
+          "step": 2,
+          "action": "更新客户端Token",
+          "code": {
+            "language": "python",
+            "snippet": "client = ASGApiClient(\n  host=\"https://192.168.10.249\",\n  token=\"new_token_here\"  # 使用新Token\n)"
+          }
+        }
+      ],
+      "prevention": "定期更新Token，妥善保管"
+    },
+    {
+      "id": "sol_010",
+      "title": "日志查询时间参数错误",
+      "category": "日志查询",
+      "symptoms": [
+        "查询日志返回错误或空结果",
+        "时间范围不正确"
+      ],
+      "root_cause": "Time_type 参数值错误",
+      "steps": [
+        {
+          "step": 1,
+          "action": "使用正确的时间类型值",
+          "code": {
+            "language": "python",
+            "snippet": "# 正确的 Time_type 值\ntime_types = {\n  'one_day': '最近24小时',\n  'one_week': '最近7天',\n  'one_month': '最近30天',\n  'cur_day': '当天',\n  'cur_week': '本周',\n  'cur_month': '本月',\n  'three_month': '最近90天',\n  'user_def': '自定义'\n}\n\nparams = {\n  'Time_type': 'one_week',  # 使用正确的值\n  'module': 'filter',\n  'sid': '1',\n  'page': 1,\n  'pageSize': 100\n}"
+          }
+        }
+      ],
+      "prevention": "参考文档使用正确的Time_type值"
+    }
+  ]
+}

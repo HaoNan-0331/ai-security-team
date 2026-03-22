@@ -1,0 +1,106 @@
+{
+  "skill_name": "ip-reputation",
+  "evals": [
+    {
+      "id": 1,
+      "name": "single-trusted-ip-query",
+      "prompt": "检查IP 8.8.8.8 的信誉，这是一个Google的DNS服务器",
+      "expected_output": "应返回低风险评分（0-20分），标识为可信IP，包含VirusTotal、AbuseIPDB等情报源的检测结果",
+      "assertions": [
+        {
+          "name": "风险评分应低于20分",
+          "type": "score_threshold",
+          "field": "overall_score",
+          "operator": "<=",
+          "value": 20
+        },
+        {
+          "name": "应包含风险等级信息",
+          "type": "contains",
+          "field": "risk_level",
+          "value": "低风险"
+        },
+        {
+          "name": "应查询至少2个情报源",
+          "type": "min_count",
+          "field": "sources_queried",
+          "value": 2
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "batch-ip-check",
+      "prompt": "批量检查以下IP地址的安全性: 8.8.8.8, 1.1.1.1, 45.142.212.14，生成汇总报告",
+      "expected_output": "应对每个IP进行信誉查询，生成包含所有IP评分的汇总报告，区分可信IP和恶意IP",
+      "assertions": [
+        {
+          "name": "应检查所有3个IP地址",
+          "type": "count",
+          "field": "ips_checked",
+          "value": 3
+        },
+        {
+          "name": "应生成汇总统计",
+          "type": "contains",
+          "field": "report",
+          "value": "汇总"
+        },
+        {
+          "name": "应区分高风险和低风险IP",
+          "type": "has_field",
+          "field": "risk_classification"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "name": "security-incident-response",
+      "prompt": "我们在安全事件中发现可疑IP 185.220.101.1，请快速调查这个IP的威胁情报",
+      "expected_output": "应返回详细的威胁情报报告，包括威胁类型、恶意活动历史、相关的安全建议",
+      "assertions": [
+        {
+          "name": "应提供威胁类型信息",
+          "type": "has_field",
+          "field": "threat_types"
+        },
+        {
+          "name": "应包含安全建议",
+          "type": "contains",
+          "field": "recommendations",
+          "value": "建议"
+        },
+        {
+          "name": "应提供详细的情报源数据",
+          "type": "min_count",
+          "field": "detailed_sources",
+          "value": 2
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "name": "ip-risk-assessment",
+      "prompt": "评估IP 192.0.2.1 的风险等级，我需要知道是否应该阻止这个IP",
+      "expected_output": "应返回风险评分和明确的阻止建议，包含详细的评分依据",
+      "assertions": [
+        {
+          "name": "应提供明确的行动建议",
+          "type": "contains",
+          "field": "action_recommendation",
+          "value": "阻止"
+        },
+        {
+          "name": "应包含评分依据",
+          "type": "has_field",
+          "field": "scoring_breakdown"
+        },
+        {
+          "name": "应给出风险等级",
+          "type": "has_field",
+          "field": "risk_level"
+        }
+      ]
+    }
+  ]
+}

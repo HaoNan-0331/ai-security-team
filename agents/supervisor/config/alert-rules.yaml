@@ -1,0 +1,254 @@
+# 告警规则配置
+version: "1.0"
+last_updated: "2026-02-19"
+
+# 告警级别定义
+alert_levels:
+  critical:
+    level_id: "ALERT-C"
+    name: "严重"
+    description: "需要立即干预"
+    color: "🔴 RED"
+    notification_method: "immediate"
+    recipients:
+      - "human_admin"
+      - "orchestrator"
+    response_time_sla: "5 minutes"
+    escalation: "如30分钟内未响应，自动升级"
+
+  warning:
+    level_id: "ALERT-W"
+    name: "警告"
+    description: "需要关注"
+    color: "🟡 YELLOW"
+    notification_method: "batched_hourly"
+    recipients:
+      - "human_admin"
+    response_time_sla: "4 hours"
+    escalation: "如24小时内未处理，升级为Critical"
+
+  info:
+    level_id: "ALERT-I"
+    name: "信息"
+    description: "常规通知"
+    color: "🟢 GREEN"
+    notification_method: "daily_digest"
+    recipients:
+      - "human_admin"
+    response_time_sla: "N/A"
+    escalation: "无需升级"
+
+# 告警触发规则
+triggers:
+  # === 连续违规告警 ===
+  consecutive_violations_same_type:
+    trigger_id: "TRIG-001"
+    name: "同类型违规连续发生"
+    description: "同一种违规类型在24小时内发生多次"
+    condition:
+      type: "consecutive_violation"
+      same_violation_type: true
+      time_window: "24h"
+      threshold: 3
+    severity: "critical"
+    alert_level: "critical"
+    message_template: |
+      【严重告警】Agent {agent_id} 连续违规
+
+      违规类型：{violation_type}
+      发生次数：{count} 次（24小时内）
+      最近发生：{last_timestamp}
+
+      建议措施：建议人类管理员介入调查
+    actions:
+      - "记录违规并扣分"
+      - "发送严重告警通知"
+      - "标记Agent需要关注"
+
+  consecutive_low_score:
+    trigger_id: "TRIG-002"
+    name: "低分连续"
+    description: "综合评分连续多次低于60分"
+    condition:
+      type: "consecutive_low_score"
+      metric: "overall_score"
+      threshold: 60
+      comparison: "less_than"
+      consecutive_count: 3
+    severity: "high"
+    alert_level: "warning"
+    message_template: |
+      【警告】Agent {agent_id} 评分连续偏低
+
+      连续低分次数：{count} 次
+      当前评分：{current_score}
+      平均评分：{average_score}
+
+      各维度评分：
+      - 执行能力：{execution_score}
+      - 合规性：{compliance_score}
+      - 协作能力：{collaboration_score}
+      - 响应时效：{timeliness_score}
+
+      建议：分析原因并提供改进指导
+    actions:
+      - "生成详细评估报告"
+      - "发送警告通知"
+      - "建议人类关注"
+
+  # === 严重违规告警 ===
+  serious_violation_unauthorized:
+    trigger_id: "TRIG-003"
+    name: "严重越权执行"
+    description: "发生严重的越权执行违规"
+    condition:
+      type: "violation"
+      violation_type: "unauthorized_execution"
+      severity: "critical"
+    severity: "critical"
+    alert_level: "critical"
+    immediate_alert: true
+    message_template: |
+      【严重告警】Agent {agent_id} 严重越权执行！
+
+      违规类型：越权执行
+      严重程度：严重
+      发生时间：{timestamp}
+
+      违规详情：
+      {violation_details}
+
+      潜在影响：
+      {potential_impact}
+
+      【需要立即处理】
+      建议立即：
+      1. 调查违规原因
+      2. 评估实际影响
+      3. 采取纠正措施
+      4. 必要时暂停该Agent
+    actions:
+      - "立即记录违规"
+      - "立即发送严重告警"
+      - "标记紧急事件"
+      - "生成详细事件报告"
+
+  # === 正向激励通知 ===
+  score_improvement_streak:
+    trigger_id: "TRIG-004"
+    name: "评分连续提升"
+    description: "Agent评分连续多次提升"
+    condition:
+      type: "improvement"
+      metric: "overall_score"
+      trend: "increasing"
+      consecutive_count: 3
+    severity: "low"
+    alert_level: "info"
+    message_template: |
+      【积极表现】Agent {agent_id} 评分持续提升！
+
+      连续提升次数：{count} 次
+      最新评分：{current_score}
+      初始评分：{starting_score}
+      提升幅度：{improvement}%
+
+      继续保持！
+    actions:
+      - "记录正向表现"
+      - "生成激励报告"
+
+# 通知渠道配置
+notification_channels:
+  immediate:
+    name: "立即通知"
+    method: "real_time_push"
+    channels:
+      - "orchestrator_alert"
+      - "human_admin_urgent"
+    retry_policy:
+      max_retries: 5
+      retry_interval: 30  # seconds
+
+  batched_hourly:
+    name: "每小时批量"
+    method: "batch_digest"
+    channels:
+      - "human_admin_digest"
+    schedule: "hourly"
+    max_items: 50
+
+  daily_digest:
+    name: "每日摘要"
+    method: "daily_summary"
+    channels:
+      - "human_admin_summary"
+    schedule: "00:00"
+    format: "markdown"
+
+# 告警升级策略
+escalation_policy:
+  enabled: true
+  levels:
+    - level: 1
+      trigger: "initial_alert"
+      wait_time: 0
+      notification: "primary"
+
+    - level: 2
+      trigger: "no_acknowledgment"
+      wait_time: 1800  # 30 minutes
+      notification: "escalated"
+      recipients: ["senior_admin", "team_lead"]
+
+    - level: 3
+      trigger: "still_no_acknowledgment"
+      wait_time: 3600  # 60 minutes
+      notification: "critical"
+      recipients: ["cto", "security_head"]
+      action: "emergency_protocol"
+
+# 告警抑制规则（避免告警风暴）
+suppression_rules:
+  duplicate_suppression:
+    enabled: true
+    window: 300  # 5 minutes
+    action: "suppress_duplicate"
+    log: true
+
+  rate_limiting:
+    enabled: true
+    max_alerts_per_minute: 10
+    overflow_action: "queue_and_batch"
+
+  maintenance_mode:
+    enabled: true
+    trigger: "system_maintenance"
+    action: "suppress_non_critical"
+
+# 告警记录格式
+alert_record_format:
+  fields:
+    - alert_id: "告警唯一标识"
+    - timestamp: "告警生成时间"
+    - trigger_id: "触发规则ID"
+    - alert_level: "告警级别"
+    - agent_id: "相关Agent ID"
+    - severity: "严重程度"
+    - title: "告警标题"
+    - message: "告警内容"
+    - status: "处理状态"
+    - acknowledged_by: "确认人"
+    - resolved_at: "解决时间"
+
+# 配置文件版本管理
+version_management:
+  current_version: "1.0"
+  last_updated: "2026-02-19"
+  update_approval_required: true
+  approver: "human_admin"
+  change_log:
+    - version: "1.0"
+      date: "2026-02-19"
+      changes: "初始版本，定义四种告警触发规则和通知策略"
+      approved_by: "human_admin"

@@ -1,0 +1,5 @@
+# Console管理
+
+通过Console口连接可以访问NF的串口管理界面，管理员可以对NF进行系统初始配置、状态检测和恢复初始化配置等功能，某些Web管理界面中无法进行管理的部分，可以在此进行管理操作。
+
+NF系统默认的Console口用户为conadmin，密码为conadmin。如何通过Console口登录NF的串口管理界面。请参见 Console管理。

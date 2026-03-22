@@ -1,0 +1,104 @@
+{
+  "DB_LOCKED": {
+    "error": "database is locked",
+    "cause": "SQLite并发写入冲突",
+    "solution": "SDK内置自动重试机制，最多5次。如仍失败，等待30秒后重试",
+    "code": "client = AssetClient()  # 自动处理并发冲突"
+  },
+  "DB_BUSY": {
+    "error": "database is busy",
+    "cause": "有长时间运行的查询或写入操作",
+    "solution": "检查是否有其他进程正在访问数据库，终止后重试",
+    "code": "# Windows\ntasklist | findstr python\n# Linux\nps aux | grep python"
+  },
+  "DECRYPT_FAILED": {
+    "error": "password decryption failed",
+    "cause": "加密密钥不匹配或损坏，.secret_key文件丢失",
+    "solution": "检查.secret_key文件是否存在，从备份恢复或重新初始化",
+    "code": "cp backup/.secret_key data/.secret_key\n# 或\npython scripts/init_db.py --reset-key"
+  },
+  "ASSET_NOT_FOUND": {
+    "error": "asset not found",
+    "cause": "asset_id不存在或资产已被删除",
+    "solution": "使用get_asset()验证asset_id，或使用list_assets()查找",
+    "code": "asset = client.get_asset(asset_id)\nif not asset:\n    print('资产不存在')"
+  },
+  "IP_DUPLICATE": {
+    "error": "duplicate IP address",
+    "cause": "尝试创建已存在的IP地址",
+    "solution": "先用get_asset_by_ip()检查IP是否已存在",
+    "code": "existing = client.get_asset_by_ip(ip_address)\nif existing:\n    print(f'IP已存在: {existing[\"name\"]}')"
+  },
+  "INVALID_ASSET_TYPE": {
+    "error": "invalid asset_type",
+    "cause": "资产类型不在允许的7种类型中",
+    "solution": "使用标准类型：NetworkDevice/SecurityDevice/Server/Terminal/Database/Application/Other",
+    "code": "valid_types = ['NetworkDevice', 'SecurityDevice', 'Server', 'Terminal', 'Database', 'Application', 'Other']"
+  },
+  "INVALID_STATUS": {
+    "error": "invalid status",
+    "cause": "资产状态不在允许的9种状态中",
+    "solution": "使用标准状态：active/standby/maintenance/retired/compromised/investigating/isolated/remediated/unknown",
+    "code": "valid_statuses = ['active', 'standby', 'maintenance', 'retired', 'compromised', 'investigating', 'isolated', 'remediated', 'unknown']"
+  },
+  "RISK_SCORE_OUT_OF_RANGE": {
+    "error": "risk_score must be 0-100",
+    "cause": "风险评分超出0-100范围",
+    "solution": "确保risk_score在0-100之间",
+    "code": "risk_score = max(0, min(100, risk_score))"
+  },
+  "JSON_FIELD_ERROR": {
+    "error": "invalid JSON in services/open_ports/vlan_ids",
+    "cause": "JSON字段格式错误",
+    "solution": "传入列表或正确格式的JSON字符串",
+    "code": "services=['nginx', 'mysql']\n# 或\nservices='[\"nginx\", \"mysql\"]'"
+  },
+  "MISSING_REQUIRED_FIELDS": {
+    "error": "missing required fields: name, asset_type",
+    "cause": "创建资产时缺少必填字段",
+    "solution": "确保提供name和asset_type字段",
+    "code": "client.create_asset(\n    name='服务器名称',  # 必填\n    asset_type='Server', # 必填\n    ip_address='...'     # 可选但建议"
+  },
+  "BATCH_OPERATION_PARTIAL_FAILURE": {
+    "error": "batch operation: some items failed",
+    "cause": "批量操作中部分项目失败",
+    "solution": "检查返回的failed_items，修复后单独处理",
+    "code": "result = client.batch_create(assets)\nif result['failed_count'] > 0:\n    for item in result['failed_items']:\n        print(f'失败: {item[\"error\"]}')"
+  },
+  "RELATIONSHIP_NOT_FOUND": {
+    "error": "relationship not found",
+    "cause": "尝试删除不存在的资产关系",
+    "solution": "先用get_relationships()确认relationship_id",
+    "code": "relationships = client.get_relationships(asset_id)\nif not relationships:\n    print('没有找到关系')"
+  },
+  "SELF_RELATIONSHIP": {
+    "error": "cannot create relationship to self",
+    "cause": "尝试将资产关联到自己",
+    "solution": "确保source_id和target_id不同",
+    "code": "if source_id == target_id:\n    raise ValueError('不能创建自关联')"
+  },
+  "EXPORT_FORMAT_ERROR": {
+    "error": "unsupported export format",
+    "cause": "导出格式不支持，只支持json和csv",
+    "solution": "使用format='json'或format='csv'",
+    "code": "client.export_assets(format='json')\n# 或\ndata = client.export_assets(format='csv')"
+  },
+  "HEALTH_CHECK_TIMEOUT": {
+    "error": "health check timeout",
+    "cause": "目标主机不响应或网络不通",
+    "solution": "检查IP地址是否正确，网络是否可达",
+    "code": "# 先测试连通性\nimport os\nos.system(f'ping -n 1 {ip_address}')"
+  },
+  "AUDIT_LOG_NOT_FOUND": {
+    "error": "no audit logs found",
+    "cause": "没有符合条件的审计日志",
+    "solution": "检查查询条件，放宽过滤条件",
+    "code": "logs = client.get_audit_logs()  # 不指定条件查询所有"
+  },
+  "CUSTOM_DB_PATH_ERROR": {
+    "error": "failed to connect to custom database",
+    "cause": "自定义数据库路径不存在或权限不足",
+    "solution": "确保路径存在且有读写权限",
+    "code": "import os\nos.makedirs('./data', exist_ok=True)\nclient = AssetClient(db_path='./data/custom.db')"
+  }
+}

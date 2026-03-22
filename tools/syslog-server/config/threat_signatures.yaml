@@ -1,0 +1,181 @@
+# Threat Signatures Configuration for Syslog Server
+# Define custom threat detection signatures
+
+signatures:
+  # SQL Injection Patterns
+  - id: "SQLI_002"
+    name: "SQL Injection - Boolean Based"
+    category: "sql_injection"
+    description: "Boolean-based SQL injection pattern"
+    patterns:
+      - "' AND 1=1"
+      - "' AND 1=2"
+      - "OR '1'='1'"
+      - "admin' OR '1'='1"
+    field: "message"
+    severity: 7
+    risk_score: 85
+    tags:
+      - sqli
+      - web_attack
+    enabled: true
+    case_insensitive: true
+
+  # Additional XSS Patterns
+  - id: "XSS_002"
+    name: "Cross-Site Scripting - Event Handlers"
+    category: "xss"
+    description: "XSS via HTML event handlers"
+    patterns:
+      - "onmouseover="
+      - "onfocus="
+      - "onblur="
+      - "onchange="
+      - "javascript:void"
+    field: "message"
+    severity: 6
+    risk_score: 65
+    tags:
+      - xss
+      - web_attack
+    enabled: true
+
+  # File Upload Attacks
+  - id: "UPLOAD_001"
+    name: "Malicious File Upload"
+    category: "exploit"
+    description: "Suspicious file upload attempt"
+    patterns:
+      - "\\.php[345]?$"
+      - "\\.jsp$"
+      - "\\.asp[x]?$"
+      - "\\.exe$"
+      - "\\.sh$"
+      - "\\.bat$"
+      - "\\.cmd$"
+    field: "message"
+    severity: 7
+    risk_score: 70
+    tags:
+      - upload
+      - web_attack
+      - potential_webshell
+    enabled: true
+
+  # Path Traversal
+  - id: "PATH_001"
+    name: "Path Traversal Attack"
+    category: "exploit"
+    description: "Directory traversal pattern"
+    patterns:
+      - "\\.\\.[\\\\/]"
+      - "%2e%2e"
+      - "etc/passwd"
+      - "windows/system32"
+      - "\\?\\.\\."
+    field: "message"
+    severity: 7
+    risk_score: 75
+    tags:
+      - path_traversal
+      - exploit
+    enabled: true
+
+  # Web Shell Patterns
+  - id: "WEBSHELL_001"
+    name: "Web Shell Detection"
+    category: "persistence"
+    description: "Web shell characteristics"
+    patterns:
+      - "eval\\(base64_decode"
+      - "eval\\(\\$_POST"
+      - "system\\(\\$_GET"
+      - "assert\\(\\$_REQUEST"
+      - "passthru\\("
+      - "shell_exec\\("
+    field: "message"
+    severity: 9
+    risk_score: 90
+    tags:
+      - webshell
+      - persistence
+      - backdoor
+    enabled: true
+
+  # Remote Code Execution
+  - id: "RCE_001"
+    name: "Remote Code Execution"
+    category: "exploit"
+    description: "RCE attempt patterns"
+    patterns:
+      - "\\|nc\\s"
+      - "\\|bash\\s"
+      - "\\|sh\\s"
+      - ";\\s*wget"
+      - ";\\s*curl"
+      - "\\|\\|\\s*curl"
+    field: "message"
+    severity: 9
+    risk_score: 95
+    tags:
+      - rce
+      - exploit
+      - command_injection
+    enabled: true
+
+  # LDAP Injection
+  - id: "LDAP_001"
+    name: "LDAP Injection"
+    category: "exploit"
+    description: "LDAP injection patterns"
+    patterns:
+      - "\\*\\)"
+      - "\\)\\("
+      - "\\*\\("
+      - "uid=\\*"
+    field: "message"
+    severity: 6
+    risk_score: 70
+    tags:
+      - ldap
+      - injection
+      - exploit
+    enabled: true
+
+  # XML External Entity
+  - id: "XXE_001"
+    name: "XXE Attack"
+    category: "exploit"
+    description: "XML External Entity injection"
+    patterns:
+      - "<!ENTITY"
+      - "<!DOCTYPE"
+      - "SYSTEM.*file"
+      - "PUBLIC.*file"
+    field: "message"
+    severity: 8
+    risk_score: 80
+    tags:
+      - xxe
+      - xml
+      - exploit
+    enabled: true
+
+  # SSRF
+  - id: "SSRF_001"
+    name: "Server-Side Request Forgery"
+    category: "exploit"
+    description: "SSRF attack patterns"
+    patterns:
+      - "url=http://localhost"
+      - "url=http://127.0.0.1"
+      - "url=http://169.254.169"
+      - "file:///"
+      - "gopher://"
+    field: "message"
+    severity: 7
+    risk_score: 75
+    tags:
+      - ssrf
+      - exploit
+    enabled: true

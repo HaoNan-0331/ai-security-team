@@ -1,0 +1,104 @@
+# Syslog Receiver Configuration
+# 定义日志接收器的配置文件
+
+receivers:
+  # ========== Standard UDP Receiver ==========
+  # 用于接收标准 Syslog 格式的 UDP 日志
+  # 适用设备: 交换机、路由器、服务器
+  - name: standard_udp
+    protocol: udp
+    host: 0.0.0.0
+    port: 514
+    format: rfc5424
+    enabled: true
+    workers: 4
+    buffer_size: 1048576  # 1MB
+    description: "标准 UDP Syslog 接收器，用于交换机、路由器等设备"
+
+  # ========== Standard TCP Receiver ==========
+  # 用于接收标准 Syslog 格式的 TCP 日志
+  # 适用设备: 交换机、路由器、服务器
+  - name: standard_tcp
+    protocol: tcp
+    host: 0.0.0.0
+    port: 514
+    format: rfc5424
+    enabled: true
+    workers: 8
+    max_connections: 1000
+    description: "标准 TCP Syslog 接收器，用于需要可靠传输的设备"
+
+  # ========== Firewall Receiver (CEF) ==========
+  # 用于接收防火墙的 CEF 格式日志
+  # 适用设备: 深信服NGAF、天融信、Palo Alto 等
+  - name: firewall
+    protocol: tcp
+    host: 0.0.0.0
+    port: 514
+    format: cef
+    enabled: true
+    workers: 4
+    max_connections: 500
+    parser_options:
+      device_type: firewall
+      vendor: generic
+    description: "防火墙专用接收器，支持 CEF 格式"
+
+  # ========== Threat Probe Receiver (JSON) ==========
+  # 用于接收威胁探针的 JSON 格式日志
+  # 适用设备: 奇安信天眼、深信服探针、科来分析器
+  - name: threat_probe
+    protocol: tcp
+    host: 0.0.0.0
+    port: 515
+    format: json
+    enabled: true
+    workers: 4
+    max_connections: 200
+    parser_options:
+      device_type: probe
+      vendor: generic
+    description: "威胁探针专用接收器，支持 JSON 格式"
+
+  # ========== IDS/IPS Receiver (CEF) ==========
+  # 用于接收 IDS/IPS 的 CEF 格式日志
+  # 适用设备: 绿盟NIPS、启明星辰
+  - name: ids_ips
+    protocol: tcp
+    host: 0.0.0.0
+    port: 516
+    format: cef
+    enabled: true
+    workers: 4
+    max_connections: 200
+    parser_options:
+      device_type: ids
+      vendor: generic
+    description: "IDS/IPS 专用接收器，支持 CEF 格式"
+
+  # ========== Example: Huawei Switch (端口分离) ==========
+  # 如果需要为不同品牌的设备使用不同端口，取消下面的注释
+  # - name: huawei_switch
+  #   protocol: udp
+  #   host: 0.0.0.0
+  #   port: 5514
+  #   format: rfc5424
+  #   enabled: false
+  #   workers: 2
+  #   parser_options:
+  #     vendor: huawei
+  #     device_type: switch
+  #   description: "华为交换机专用端口"
+
+  # ========== Example: Cisco Switch ==========
+  # - name: cisco_switch
+  #   protocol: udp
+  #   host: 0.0.0.0
+  #   port: 5515
+  #   format: rfc5424
+  #   enabled: false
+  #   workers: 2
+  #   parser_options:
+  #     vendor: cisco
+  #     device_type: switch
+  #   description: "思科交换机专用端口"

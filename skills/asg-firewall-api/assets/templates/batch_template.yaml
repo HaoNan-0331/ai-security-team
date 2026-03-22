@@ -1,0 +1,69 @@
+# ASG防火墙批量操作模板 (YAML格式)
+# 使用方法: python scripts/asg_batch_operations.py <host> <token> this_file.yaml
+
+# 添加一体化策略
+- method: POST
+  endpoint: /api/policy
+  params:
+    lang: cn
+  data:
+    id: "2"
+    protocol: "1"
+    if_in: "any"
+    if_out: "any"
+    sip: "192.168.1.0/24"
+    dip: "any"
+    sev: "any"
+    user: "any"
+    app: "any"
+    tr: "always"
+    mode: "1"
+    enable: "1"
+    syslog: "1"
+    log_level: "6"
+    desc: "允许内网访问"
+
+# 查询一体化策略
+- method: GET
+  endpoint: /api/policy
+  params:
+    lang: cn
+
+# 添加IP黑名单
+- method: POST
+  endpoint: /api/blacklist
+  params:
+    lang: cn
+  data:
+    ip_type: "1"
+    ip: "5.5.5.5"
+    age: "3600"
+    enable: "1"
+
+# 查询IP黑名单
+- method: GET
+  endpoint: /api/blacklist
+  params:
+    lang: cn
+    ip_type: "1"
+
+# 添加地址对象
+- method: POST
+  endpoint: /api/address
+  params:
+    lang: cn
+  data:
+    name: "test_addr"
+    desc: "测试地址对象"
+    type: 0
+    item:
+      - host: "1.1.1.1"
+        type: 0
+      - net: "192.168.1.0/24"
+        type: 1
+
+# 查询地址对象
+- method: GET
+  endpoint: /api/address
+  params:
+    lang: cn

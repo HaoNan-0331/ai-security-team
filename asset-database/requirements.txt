@@ -1,0 +1,23 @@
+# 资产数据库依赖 - v3.0 CLI版
+# AI Security Team
+
+# 数据库
+sqlalchemy>=2.0.0
+
+# CLI工具
+click>=8.0.0
+
+# 加密
+cryptography>=41.0.0
+
+# 数据处理（用于导出）
+pandas>=2.0.0
+openpyxl>=3.1.0  # Excel导出支持
+
+# 工具
+python-dotenv>=1.0.0
+loguru>=0.7.0
+
+# 网络扫描依赖（可选，用于资产发现）
+# python-nmap>=0.7.1
+# scapy>=2.5.0

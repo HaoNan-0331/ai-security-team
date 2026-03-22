@@ -1,0 +1,81 @@
+# IP信誉情报源配置
+# 每个情报源的权重和可信度配置
+
+sources:
+  virustotal:
+    enabled: true
+    name: "VirusTotal"
+    description: "Google-owned virus and malware scanner"
+    url_template: "https://www.virustotal.com/gui/ip-address/{ip}"
+    weight: 0.30
+    reliability: 0.95
+    requires_api: false
+    query_method: "browser"
+    parse_hints:
+      detection_field: "detection_ratio"
+      last_scan_field: "last_scan_date"
+      threat_types: "categories"
+
+  abuseipdb:
+    enabled: true
+    name: "AbuseIPDB"
+    description: "IP address blacklist project"
+    url_template: "https://www.abuseipdb.com/check/{ip}"
+    weight: 0.25
+    reliability: 0.90
+    requires_api: false
+    query_method: "browser"
+    parse_hints:
+      report_count: "reports"
+      confidence: "confidence_score"
+      last_report: "last_reported"
+      categories: "abuse_types"
+
+  alienvault:
+    enabled: true
+    name: "AlienVault OTX"
+    description: "Open Threat Exchange platform"
+    url_template: "https://otx.alienvault.com/indicator/ip/{ip}"
+    weight: 0.20
+    reliability: 0.85
+    requires_api: false
+    query_method: "browser"
+    parse_hints:
+      pulses: "pulse_count"
+      reputation: "reputation_score"
+      first_seen: "first_seen"
+      last_seen: "last_seen"
+
+  shodan:
+    enabled: true
+    name: "Shodan"
+    description: "Internet-connected device search engine"
+    url_template: "https://www.shodan.io/host/{ip}"
+    weight: 0.15
+    reliability: 0.80
+    requires_api: false
+    query_method: "browser"
+    parse_hints:
+      open_ports: "ports"
+      vulnerabilities: "vulns"
+      services: "services"
+      is_ics: "ics"
+
+  urlhaus:
+    enabled: true
+    name: "URLhaus"
+    description: "Malware URL tracking project"
+    url_template: "https://urlhaus.abuse.ch/browse.php?search={ip}"
+    weight: 0.10
+    reliability: 0.75
+    requires_api: false
+    query_method: "browser"
+    parse_hints:
+      malware_count: "malware_samples"
+      tags: "tags"
+      first_seen: "first_seen"
+      last_seen: "last_seen"
+
+# 权重验证
+# 所有启用来源的权重总和应该等于 1.0
+# 如需调整权重，请确保总和保持为 1.0

@@ -1,0 +1,194 @@
+# 评分规则配置
+version: "1.0"
+last_updated: "2026-02-19"
+
+# 维度权重配置
+weights:
+  execution_capability: 0.30    # 执行能力
+  compliance: 0.30              # 合规性
+  collaboration: 0.20           # 协作能力
+  timeliness: 0.20            # 响应时效
+
+# 评分标准详细定义
+scoring_criteria:
+  execution_capability:
+    name: "执行能力"
+    description: "Agent完成任务的准确性和效率"
+    levels:
+      100:
+        label: "完美执行"
+        description: "无错误，高质量完成"
+        criteria: "任务完成度100%，无错误，无回退"
+      80:
+        label: "良好执行"
+        description: "轻微瑕疵，不影响结果"
+        criteria: "小错误但已自修正，不影响最终结果"
+      60:
+        label: "合格执行"
+        description: "明显问题，勉强完成"
+        criteria: "有错误需要外部协助修正，延迟完成"
+      40:
+        label: "较差执行"
+        description: "严重问题，需要重做"
+        criteria: "执行失败，需要重新执行任务"
+      0:
+        label: "执行失败"
+        description: "完全失败，无法完成"
+        criteria: "任务完全失败，无法交付结果"
+
+  compliance:
+    name: "合规性"
+    description: "是否遵守职责边界规则（三条铁律）"
+    levels:
+      100:
+        label: "完全合规"
+        description: "完全遵守三条铁律"
+        criteria: "未发生任何违规行为"
+      80:
+        label: "轻微越界"
+        description: "轻微越界，未造成后果"
+        criteria: "轻微违反边界但及时发现并纠正"
+      60:
+        label: "明显违规"
+        description: "明显违规，需要纠正"
+        criteria: "明显违反规则，造成一定影响"
+      0:
+        label: "严重违规"
+        description: "严重违规，造成损失"
+        criteria: "严重违反规则，造成实际损失"
+
+  collaboration:
+    name: "协作能力"
+    description: "是否按规则二优先寻求Agent协作"
+    levels:
+      100:
+        label: "正确协作"
+        description: "正确执行规则二，优先协作"
+        criteria: "超出能力范围时先寻求Agent协作"
+      60:
+        label: "直接上报"
+        description: "直接上报人类，未尝试协作"
+        criteria: "未先寻求Agent协作直接上报"
+      0:
+        label: "违规处理"
+        description: "擅自处理或推诿"
+        criteria: "擅自处理超出能力范围的任务或推诿责任"
+
+  timeliness:
+    name: "响应时效"
+    description: "任务响应和处理速度"
+    levels:
+      100:
+        label: "及时响应"
+        description: "在预期时间内完成"
+        criteria: "在预期时间内响应并完成"
+      80:
+        label: "轻微延迟"
+        description: "轻微延迟"
+        criteria: "延迟在可接受范围内（<20%）"
+      60:
+        label: "明显延迟"
+        description: "明显延迟"
+        criteria: "延迟较明显（20%-50%）"
+      0:
+        label: "严重超时"
+        description: "严重超时"
+        criteria: "严重超时（>50%）或未完成"
+
+# 评级标准
+rating:
+  excellent:
+    name: "优秀"
+    range: [90, 100]
+    description: "表现卓越"
+    action: "正常监控"
+  good:
+    name: "良好"
+    range: [80, 89]
+    description: "表现良好"
+    action: "正常监控"
+  acceptable:
+    name: "合格"
+    range: [70, 79]
+    description: "基本合格，有改进空间"
+    action: "关注提醒"
+  needs_improvement:
+    name: "待改进"
+    range: [60, 69]
+    description: "表现不佳，需要关注"
+    action: "告警并分析原因"
+  unsatisfactory:
+    name: "不合格"
+    range: [0, 59]
+    description: "严重问题，需立即干预"
+    action: "立即告警，上报人类干预"
+
+# 评分周期配置
+scoring_cycles:
+  realtime:
+    name: "实时评分"
+    description: "每次交互后立即评分"
+    retention: "permanent"  # 永久保留
+    storage_path: "data/evaluations/realtime/"
+
+  daily:
+    name: "每日汇总"
+    description: "每日生成日度评分汇总"
+    schedule: "00:00"
+    retention: "permanent"
+    storage_path: "data/evaluations/daily/"
+
+  weekly:
+    name: "每周汇总"
+    description: "每周生成周度评估报告"
+    schedule: "Sunday 00:00"
+    retention: "permanent"
+    storage_path: "reports/weekly/"
+
+  monthly:
+    name: "每月汇总"
+    description: "每月生成月度综合评估"
+    schedule: "1st 00:00"
+    retention: "permanent"
+    storage_path: "reports/monthly/"
+
+# 数据保留策略
+data_retention:
+  communication_logs: "permanent"
+  execution_logs: "permanent"
+  evaluation_records: "permanent"
+  violation_records: "permanent"
+  alert_records: "permanent"
+  statistics: "permanent"
+
+  # 压缩策略（可选，当存储空间紧张时）
+  compression:
+    enabled: false  # 默认不压缩，保持可读性
+    compress_after_days: 365  # 可选：1年后的数据压缩存储
+    compression_format: "gzip"
+
+# 规则修改建议流程
+rule_change_process:
+  proposal:
+    path: "config/rule-change-proposals/"
+    template: "proposal-{timestamp}-{sequence}.md"
+    required_fields:
+      - proposal_id
+      - rule_type  # scoring|violation|alert
+      - description
+      - rationale
+      - expected_impact
+      - proposed_by  # supervisor
+
+  review:
+    reviewer: "human_admin"
+    review_period_days: 7
+
+  approval:
+    approved: "move to config/ and activate"
+    rejected: "archive with reason"
+
+  versioning:
+    enabled: true
+    format: "semantic versioning (v1.0.0)"
+```

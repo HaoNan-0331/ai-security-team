@@ -1,0 +1,13 @@
+[
+  {
+    "email_id": "reply_8",
+    "in_reply_to": "8",
+    "subject": "Re: 网络资产查询",
+    "from": "wanghaonan0331@foxmail.com",
+    "to": ["1466160825@qq.com"],
+    "sent_at": "2026-02-15T23:40:32",
+    "status": "queued_for_sending",
+    "content_html": "<!DOCTYPE html><html><head><meta charset=\"utf-8\"><style>body { font-family: 'Microsoft YaHei', Arial, sans-serif; line-height: 1.6; color: #333; margin: 20px; } h1 { color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 10px; } h2 { color: #34495e; margin-top: 30px; } table { border-collapse: collapse; width: 100%; margin: 20px 0; } th { background-color: #3498db; color: white; padding: 12px; text-align: left; } td { border: 1px solid #ddd; padding: 10px; } tr:nth-child(even) { background-color: #f9f9f9; } tr:hover { background-color: #f1f1f1; } .stats-box { background: #ecf0f1; padding: 15px; border-radius: 5px; margin: 20px 0; } .highlight { color: #e74c3c; font-weight: bold; } .footer { margin-top: 30px; padding-top: 20px; border-top: 1px solid #ddd; color: #7f8c8d; font-size: 12px; }</style></head><body><h1>资产库查询报告</h1><p>尊敬的管理员，您好！</p><p>根据您的请求，AI协调器已调用资产管理Agent完成了资产库查询。以下是查询结果：</p><h2>一、资产统计摘要</h2><div class=\"stats-box\"><p><strong>设备总数：</strong><span class=\"highlight\">1 台</span></p><p><strong>活跃设备：</strong>1 台 (100%)</p></div><h2>二、设备类型分布</h2><table><tr><th>设备类型</th><th>数量</th><th>占比</th></tr><tr><td>网络设备 (NetworkDevice)</td><td>1</td><td>100%</td></tr><tr><td>安全设备 (SecurityDevice)</td><td>0</td><td>0%</td></tr><tr><td>服务器 (Server)</td><td>0</td><td>0%</td></tr><tr><td>终端设备 (Terminal)</td><td>0</td><td>0%</td></tr></table><h2>三、关键设备列表</h2><table><tr><th>设备名称</th><th>IP地址</th><th>类型</th><th>厂商</th><th>协议</th><th>重要性</th><th>环境</th><th>状态</th></tr><tr><td>H3C-Switch-56-254</td><td>192.168.56.254</td><td>NetworkDevice</td><td>H3C</td><td>SSH</td><td>重要 (important)</td><td>生产环境</td><td>活跃</td></tr></table><h2>四、备注</h2><p>当前资产库中仅有 1 台设备记录。如需添加更多设备，请使用资产管理Agent的 create_asset 方法。</p><div class=\"footer\"><p>此报告由 AI协调器 (Orchestrator) 自动生成</p><p>生成时间：2026-02-15</p><p>执行Agent：资产管理Agent</p></div></body></html>",
+    "note": "邮件已准备发送，但需要正确的主密码才能通过SMTP发送"
+  }
+]

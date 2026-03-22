@@ -1,0 +1,18 @@
+[
+  {
+    "email_id": "18",
+    "subject": "网络资产查询",
+    "sender": "1466160825@qq.com",
+    "sender_name": "1466160825@qq.com",
+    "to": [
+      "wanghaonan0331@foxmail.com"
+    ],
+    "date": "2026-03-22T11:00:59+08:00",
+    "body_text": "\r\n测试邮件5，无需执行，直接标记已读并清空即可。完成后向我回复，测试成功\r\n\r\n\r\n1466160825@qq.com\r\n",
+    "body_html": "<html><head><meta http-equiv=\"content-type\" content=\"text/html; charset=GB2312\"><style>body { line-height: 1.5; }body { font-size: 14px; font-family: \"Microsoft YaHei UI\"; color: rgb(0, 0, 0); line-height: 1.5; }</style></head><body>\n<div><span></span><br></div>\n<div>测试邮件5，无需执行，直接标记已读并清空即可。完成后向我回复，测试成功</div><hr style=\"WIDTH: 210px; HEIGHT: 1px\" color=\"#b5c4df\" size=\"1\" align=\"left\">\n<div><span><div style=\"MARGIN: 10px; FONT-FAMILY: verdana; FONT-SIZE: 10pt\"><div>1466160825@qq.com</div></div></span></div>\n</body></html>",
+    "attachments": [],
+    "sender_role": "admin",
+    "sender_description": "主管",
+    "source_id": "18"
+  }
+]

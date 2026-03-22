@@ -1,0 +1,26 @@
+# IP Reputation Configuration
+# Define known malicious and suspicious IP addresses
+
+# Known malicious IP addresses
+malicious_ips:
+  - "192.0.2.1"
+  - "198.51.100.1"
+  - "203.0.113.1"
+
+# Malicious IP ranges (CIDR notation)
+malicious_ranges:
+  - "192.0.2.0/24"
+  - "198.51.100.0/24"
+
+# Suspicious IP addresses (lower confidence)
+suspicious_ips:
+  - "192.0.2.100"
+  - "198.51.100.100"
+
+# Whitelisted IP addresses (never flagged)
+whitelist:
+  - "127.0.0.1"
+  - "::1"
+  - "8.8.8.8"
+  - "8.8.4.4"
+  - "1.1.1.1"
